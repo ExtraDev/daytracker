@@ -1,0 +1,41 @@
+{
+    "days": [
+        {
+            "date": "06.01.2024",
+            "widgets": [
+                {
+                    "order": 1,
+                    "NOTE": "Une simple note, rien d'autre."
+                },{
+                    "order": 2,
+                    "TODOLIST": [
+                        {
+                            "name": "Bonjour je suis la première tâche",
+                            "status": false,
+                            "timer": false,
+                            "elapsed": 0
+                        },{
+                            "name": "Bonjour je suis la première tâche",
+                            "status": false,
+                            "timer": false,
+                            "elapsed": 0
+                        },{
+                            "name": "Bonjour je suis la première tâche",
+                            "status": false,
+                            "timer": true,
+                            "elapsed": 0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "date": "07.01.2024",
+            "widgets": [
+                {
+                    "NOTE": "Bonjour je suis une autre note"
+                }
+            ]
+        }
+    ]
+}

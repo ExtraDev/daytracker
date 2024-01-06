@@ -1,0 +1,12 @@
+<mat-card>
+    <mat-card-content>
+        <button mat-raised-button color="primary" (click)="changeStatus()">{{todo?.status}}</button>
+
+        <div class="name">
+            {{todo?.name}}
+        </div>
+    </mat-card-content>
+    <div class="timer" *ngIf="todo?.timer">
+        {{todo?.timer}}
+    </div>
+</mat-card>
