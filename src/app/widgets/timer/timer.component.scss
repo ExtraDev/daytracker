@@ -1,0 +1,43 @@
+mat-card {
+    mat-card-content {
+        margin-top: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+
+        .clock {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+
+            .timer {
+                flex: 1;
+                font-size: 6em;
+
+                .controls {
+                    flex: 1;
+                    display: flex;
+                    gap: 20px;
+                    justify-content: center;
+                    margin-top: 35px;
+                }
+            }
+        }
+
+        .tracker {
+            flex: 4;
+            margin-top: -25px;
+
+            form {
+                mat-form-field {
+                    width: 100%;
+                }
+            }
+
+            .timed {
+                max-height: 300px;
+                overflow-y: auto;
+            }
+        }
+    }
+}
