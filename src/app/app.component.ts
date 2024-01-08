@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { Note } from './common/models/note.model';
-import { Status, Todo } from './common/models/todo.model';
+import { NotesService } from './common/services/note.service';
+import { TodosService } from './common/services/todo.service';
+import { TimersService } from './common/services/timer.service';
 
 @Component({
   selector: 'app-root',
@@ -10,27 +11,17 @@ import { Status, Todo } from './common/models/todo.model';
 export class AppComponent {
   title = 'daytracker';
 
-  note: Note = {
-    note: "Bonjour je suis le contenu de la note :D"
-  }
+  public dayId = 1;
 
-  public todolist: Todo[] = [
-    {
-      name: "Bonjour je suis la première todo",
-      status: Status.Todo,
-      timer: false,
-      elapsed: 0
-    }, {
-      name: "Bonjour je suis la deuxième todo et je suis timé",
-      status: Status.Done,
-      timer: true,
-      elapsed: 500
-    }
-  ]
+  public notes$ = this.notesService.getNotes$();
+  public todolist$ = this.todosService.getTodos$();
+  public timers$ = this.timerService.getTracks$();
 
-  constructor() {
-
-  }
+  constructor(
+    private notesService: NotesService,
+    private todosService: TodosService,
+    private timerService: TimersService
+  ) { }
 
   addWidget(): void {
     console.log("Add widget");

@@ -1,22 +1,33 @@
 <div id="container">
-  <h1>Day tracker</h1>
+  <h1 id="main-title">Day IT</h1>
 
   <div class="widget">
-    <app-timer></app-timer>
+    <app-timer [dayId]="dayId"></app-timer>
   </div>
 
   <div class="widget">
-    <h2>Notes</h2>
-    <app-note [note]="note"></app-note>
+    <div class="header">
+      <h2>Notes</h2>
+      <button mat-fab color="warn" class="btn-plus-widget">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+    <app-note *ngFor="let note of notes$ | async" [note]="note"></app-note>
   </div>
 
   <div class="widget">
-    <h2>Todolist</h2>
-    <app-todo *ngFor="let todo of todolist" [todo]="todo"></app-todo>
+    <div class="header">
+      <h2>Todolist</h2>
+      <button mat-fab color="warn" class="btn-plus-widget">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+
+    <app-todo *ngFor="let todo of todolist$ | async" [todo]="todo"></app-todo>
   </div>
 
   <div class="add-button">
-    <button mat-fab color="primary" (click)="addWidget()">
+    <button mat-fab color="primary">
       <mat-icon>add</mat-icon>
     </button>
   </div>

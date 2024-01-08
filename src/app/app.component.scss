@@ -2,10 +2,31 @@
     max-width: 800px;
     margin: auto;
     padding: 10px;
+
+    #main-title {
+        margin-top: 20px;
+        margin-bottom: 30px;
+        text-align: center;
+        font-size: 3em;
+    }
 }
 
 .widget {
     margin-bottom: 30px;
+
+    .header {
+        display: flex;
+
+        h2 {
+            flex: 1;
+        }
+
+        .btn-plus-widget {
+            width: 30px;
+            height: 30px;
+        }
+    }
+
 }
 
 .add-button {

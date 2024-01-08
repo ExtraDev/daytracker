@@ -1,0 +1,61 @@
+{
+  "days": [
+    {
+      "id": 1,
+      "date": "08.01.2024"
+    }
+  ],
+  "notes": [
+    {
+      "id": 1,
+      "note": "Bonjour je suis une note",
+      "dayId": 1
+    },
+    {
+      "id": 2,
+      "note": "Bonjour je suis une deuxième",
+      "dayId": 1
+    }
+  ],
+  "tracks": [
+    {
+      "id": 1,
+      "elapsed": 3600,
+      "name": "Première track",
+      "dayId": 1
+    },
+    {
+      "id": 2,
+      "elapsed": 1500,
+      "name": "Deuxième track",
+      "dayId": 1
+    },
+    {
+      "id": 3,
+      "elapsed": 100,
+      "name": "Troisème track",
+      "dayId": 1
+    },
+    {
+      "elapsed": 4,
+      "name": "Track depuis l'interface",
+      "id": 4,
+      "dayId": 1
+    },
+    {
+      "elapsed": 20,
+      "name": "Création d'un nouveau track depuis l'interface.",
+      "dayId": 1,
+      "id": 5
+    }
+  ],
+  "todos": [
+    {
+      "id": 1,
+      "name": "Je suis une première Todo",
+      "status": false,
+      "timed": false,
+      "elapsed": null
+    }
+  ]
+}

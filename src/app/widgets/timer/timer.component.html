@@ -2,8 +2,9 @@
     <mat-card-content>
         <div class="clock">
             <div class="timer">
-                {{ convertToTime(elapsed) }}
-
+                <div>
+                    {{ convertToTime(elapsed) }}
+                </div>
                 <div class="controls">
                     <button (click)="startTimer()" mat-mini-fab color="primary">
                         <mat-icon>play_arrow</mat-icon>
@@ -23,15 +24,15 @@
 
         <div class="tracker">
             <form>
-                <mat-form-field class="full-field" (keydown.enter)="save()">
+                <mat-form-field class="full-field" (keydown.enter)="saveTrack()">
                     <mat-label>Track name</mat-label>
                     <input matInput placeholder="New track" [formControl]="trackName">
                 </mat-form-field>
             </form>
             <div class="timed">
-                <p *ngFor="let timed of trackedTime">
-                    <b>{{convertToTime(timed.elapsed)}}</b>
-                    {{timed.name}}
+                <p *ngFor="let track of trackedTimes$ | async"> <!-- (click)="selectTrack(track)" -->
+                    <b>{{convertToTime(track.elapsed)}}</b>
+                    {{track.name}}
                 </p>
             </div>
         </div>
