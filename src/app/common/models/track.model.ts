@@ -1,5 +1,5 @@
 export interface Track {
-    trackId?: number,
+    id?: number,
     elapsed: number,
     name: string,
     dayId?: number

@@ -22,11 +22,22 @@ export class TimersService {
     );
   }
 
-  public postTrack$(note: Track): Observable<Track> {
-    return this.httpClient.post<Track>(this.baseUrl, note).pipe();
+  public postTrack$(track: Track): Observable<Track> {
+    return this.httpClient.post<Track>(this.baseUrl, track).pipe(
+      tap(x => console.log(x)
+      )
+    );
   }
 
-  public updateTrack$(note: Track): Observable<Track> {
-    return this.httpClient.put<Track>(this.baseUrl, note).pipe();
+  public updateTrack$(track: Track): Observable<Track> {
+    return this.httpClient.put<Track>(`${this.baseUrl}/${track.id}`, track).pipe(
+      tap(x => console.log(x))
+    );
+  }
+
+  public deleteTrack$(track: Track): Observable<Track> {
+    return this.httpClient.delete<Track>(`${this.baseUrl}/${track.id}`).pipe(
+      tap(x => console.log(x))
+    );
   }
 }

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Observable, interval, startWith, take } from 'rxjs';
+import { Observable, interval } from 'rxjs';
 import { Track } from 'src/app/common/models/track.model';
 import { TimersService } from 'src/app/common/services/timer.service';
 
@@ -16,6 +16,7 @@ export class TimerComponent implements OnInit {
   tick$ = interval(1000);
   tickSubscription: any = null;
   paused = false;
+  isTracking = false;
   trackName = new FormControl<string>('');
   trackSelected?: Track;
 
@@ -31,6 +32,7 @@ export class TimerComponent implements OnInit {
 
   startTimer(): void {
     if (this.tickSubscription === null || this.paused) {
+      this.isTracking = true;
       this.paused = false;
       this.tickSubscription = this.tick$.subscribe((x) => {
         this.elapsed++;
@@ -42,6 +44,8 @@ export class TimerComponent implements OnInit {
     if (this.tickSubscription !== null) {
       this.tickSubscription.unsubscribe();
       this.paused = true;
+      this.isTracking = false;
+
     }
   }
 
@@ -50,10 +54,12 @@ export class TimerComponent implements OnInit {
       this.elapsed = 0;
       this.tickSubscription.unsubscribe();
       this.tickSubscription = null;
+      this.isTracking = false;
     }
 
     this.trackSelected = undefined;
-    this.trackName.setValue("");
+    this.trackName.reset();
+    this.elapsed = 0;
   }
 
   convertToTime(elapsedSeconds: number): string {
@@ -62,9 +68,8 @@ export class TimerComponent implements OnInit {
     let seconds = elapsedSeconds % 60;
 
     let resHours = ""
-    if (hours < 10) { resHours = "0" + hours }
-    else { resHours = hours.toString() }
-
+    if (hours < 10) resHours = "0" + hours
+    else resHours = hours.toString()
 
     let resMinutes = ""
     if (minutes < 10) { resMinutes = "0" + minutes }
@@ -78,7 +83,12 @@ export class TimerComponent implements OnInit {
   }
 
   public saveTrack(): void {
-    if (this.trackName.value !== '' && this.trackName.value !== null) {
+    if (this.trackSelected !== undefined && this.trackName.value !== null) {
+      this.trackSelected.elapsed = this.elapsed;
+      this.trackSelected.name = this.trackName.value;
+      this.timersService.updateTrack$(this.trackSelected).subscribe((x) => {
+      });
+    } else if (this.trackName.value !== '' && this.trackName.value !== null) {
       let newTrack: Track = {
         elapsed: this.elapsed,
         name: this.trackName.value || '',
@@ -89,34 +99,24 @@ export class TimerComponent implements OnInit {
         this.trackedTimes$ = this.timersService.getTrackForDay$(this.dayId);
       });
     }
+
+    this.resetTimer();
   }
-
-  // public saveTrack(): void {
-  //   if (this.trackSelected !== undefined && this.trackName.value !== null) {
-  //     this.trackedTimes[this.trackSelected.trackId - 1].elapsed = this.elapsed;
-  //     this.trackedTimes[this.trackSelected.trackId - 1].name = this.trackName.value;
-  //     this.trackName.reset();
-  //   } else if (this.trackName.value !== '' && this.trackName.value !== null) {
-  //     let newTrack: Track = {
-  //       trackId: this.trackedTimes.length + 1,
-  //       elapsed: this.elapsed,
-  //       name: this.trackName.value || ''
-  //     }
-
-  //     this.trackedTimes.push(
-  //       newTrack
-  //     )
-
-  //     this.trackName.reset();
-  //   } else {
-
-  //   }
-  // }
 
   public selectTrack(track: Track): void {
     this.trackSelected = track;
     this.elapsed = track.elapsed;
     this.trackName.setValue(track.name);
     console.table(this.trackSelected);
+  }
+
+  public deleteTrack(): void {
+    if (this.trackSelected !== undefined) {
+      this.timersService.deleteTrack$(this.trackSelected).subscribe();
+      this.trackedTimes$ = this.timersService.getTrackForDay$(this.dayId);
+      this.trackSelected = undefined;
+      this.elapsed = 0;
+      this.trackName.reset();
+    }
   }
 }

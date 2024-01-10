@@ -37,16 +37,10 @@
       "dayId": 1
     },
     {
-      "elapsed": 4,
-      "name": "Track depuis l'interface",
-      "id": 4,
-      "dayId": 1
-    },
-    {
-      "elapsed": 20,
-      "name": "Création d'un nouveau track depuis l'interface.",
+      "elapsed": 21,
+      "name": "ma track",
       "dayId": 1,
-      "id": 5
+      "id": 4
     }
   ],
   "todos": [

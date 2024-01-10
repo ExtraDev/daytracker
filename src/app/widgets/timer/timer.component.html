@@ -6,7 +6,7 @@
                     {{ convertToTime(elapsed) }}
                 </div>
                 <div class="controls">
-                    <button (click)="startTimer()" mat-mini-fab color="primary">
+                    <button (click)="startTimer()" mat-mini-fab color="primary" [disabled]="isTracking">
                         <mat-icon>play_arrow</mat-icon>
                     </button>
 
@@ -17,9 +17,17 @@
                     <button (click)="resetTimer()" mat-mini-fab color="warn">
                         <mat-icon>stop</mat-icon>
                     </button>
+
+                    <button (click)="saveTrack()" mat-mini-fab color="primary"
+                        [disabled]="!elapsed || !trackName.value">
+                        <mat-icon>save</mat-icon>
+                    </button>
+
+                    <button (click)="deleteTrack()" mat-mini-fab color="warn" [disabled]="!trackSelected">
+                        <mat-icon>delete</mat-icon>
+                    </button>
                 </div>
             </div>
-
         </div>
 
         <div class="tracker">
@@ -30,7 +38,7 @@
                 </mat-form-field>
             </form>
             <div class="timed">
-                <p *ngFor="let track of trackedTimes$ | async"> <!-- (click)="selectTrack(track)" -->
+                <p *ngFor="let track of trackedTimes$ | async" (click)="selectTrack(track)">
                     <b>{{convertToTime(track.elapsed)}}</b>
                     {{track.name}}
                 </p>
