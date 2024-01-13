@@ -1,10 +1,14 @@
 import { Component, Input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { Status, Todo } from 'src/app/common/models/todo.model';
 
 @Component({
     selector: 'app-todo',
     templateUrl: './todo.component.html',
-    styleUrls: ['./todo.component.scss']
+    styleUrls: ['./todo.component.scss'],
+    standalone: true,
+    imports: [MatCardModule, MatButtonModule]
 })
 export class TodoComponent {
     @Input() todo?: Todo

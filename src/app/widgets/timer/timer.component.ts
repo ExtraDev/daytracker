@@ -1,13 +1,21 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { Observable, interval } from 'rxjs';
 import { Track } from 'src/app/common/models/track.model';
 import { TimersService } from 'src/app/common/services/timer.service';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-timer',
+  standalone: true,
   templateUrl: './timer.component.html',
-  styleUrls: ['./timer.component.scss']
+  styleUrls: ['./timer.component.scss'],
+  imports: [AsyncPipe, MatCardModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, ReactiveFormsModule]
 })
 export class TimerComponent implements OnInit {
   @Input() dayId?: number;

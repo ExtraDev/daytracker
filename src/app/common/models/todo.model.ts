@@ -7,6 +7,7 @@ export enum Status {
 }
 
 export interface Todo extends Widget {
+    id?: number,
     name?: string,
     status?: Status,
     timed?: boolean,

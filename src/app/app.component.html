@@ -4,7 +4,7 @@
   <div class="widget">
     <app-timer [dayId]="dayId"></app-timer>
   </div>
-
+  <!--
   <div class="widget">
     <div class="header">
       <h2>Notes</h2>
@@ -12,7 +12,9 @@
         <mat-icon>add</mat-icon>
       </button>
     </div>
-    <app-note *ngFor="let note of notes$ | async" [note]="note"></app-note>
+    @for (note of notes$ | async; track note.id) {
+    <app-note [note]="note"></app-note>
+    }
   </div>
 
   <div class="widget">
@@ -23,12 +25,14 @@
       </button>
     </div>
 
-    <app-todo *ngFor="let todo of todolist$ | async" [todo]="todo"></app-todo>
+    @for (todo of todolist$ | async; track todo.id) {
+    <app-todo [todo]="todo"></app-todo>
+    }
   </div>
 
   <div class="add-button">
     <button mat-fab color="primary">
       <mat-icon>add</mat-icon>
     </button>
-  </div>
+  </div> -->
 </div>
