@@ -7,8 +7,10 @@ import { Note } from 'src/app/common/models/note.model';
   standalone: true,
   templateUrl: './note.component.html',
   styleUrls: ['./note.component.scss'],
-  imports: [MatCardModule]
+  imports: [MatCardModule],
 })
 export class NoteComponent {
   @Input() note?: Note;
+
+  constructor() { }
 }

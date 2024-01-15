@@ -1,14 +1,14 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { Observable, interval } from 'rxjs';
-import { Track } from 'src/app/common/models/track.model';
 import { TimersService } from 'src/app/common/services/timer.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { AsyncPipe } from '@angular/common';
+import { Track } from 'src/app/common/models/track.model';
 
 @Component({
   selector: 'app-timer',
@@ -20,9 +20,11 @@ import { AsyncPipe } from '@angular/common';
 export class TimerComponent implements OnInit {
   @Input() dayId?: number;
 
+  private timersService = inject(TimersService);
+
   elapsed: number = 0;
   tick$ = interval(1000);
-  tickSubscription: any = null;
+  tickSubscription: any = undefined;
   paused = false;
   isTracking = false;
   trackName = new FormControl<string>('');
@@ -30,16 +32,15 @@ export class TimerComponent implements OnInit {
 
   trackedTimes$?: Observable<Track[] | undefined>;
 
-  constructor(private timersService: TimersService) {
+  constructor() {
   }
 
   ngOnInit(): void {
-    console.log(this.dayId)
     this.trackedTimes$ = this.timersService.getTrackForDay$(this.dayId);
   }
 
   startTimer(): void {
-    if (this.tickSubscription === null || this.paused) {
+    if (this.tickSubscription === undefined || this.paused) {
       this.isTracking = true;
       this.paused = false;
       this.tickSubscription = this.tick$.subscribe((x) => {
@@ -49,7 +50,7 @@ export class TimerComponent implements OnInit {
   }
 
   stopTimer(): void {
-    if (this.tickSubscription !== null) {
+    if (this.tickSubscription !== undefined) {
       this.tickSubscription.unsubscribe();
       this.paused = true;
       this.isTracking = false;
@@ -58,10 +59,10 @@ export class TimerComponent implements OnInit {
   }
 
   resetTimer(): void {
-    if (this.tickSubscription !== null) {
+    if (this.tickSubscription !== undefined) {
       this.elapsed = 0;
       this.tickSubscription.unsubscribe();
-      this.tickSubscription = null;
+      this.tickSubscription = undefined;
       this.isTracking = false;
     }
 
@@ -91,11 +92,13 @@ export class TimerComponent implements OnInit {
   }
 
   public saveTrack(): void {
-    if (this.trackSelected !== undefined && this.trackName.value !== null) {
+    if (
+      this.trackSelected !== undefined &&
+      this.trackName.value !== null
+    ) {
       this.trackSelected.elapsed = this.elapsed;
       this.trackSelected.name = this.trackName.value;
-      this.timersService.updateTrack$(this.trackSelected).subscribe((x) => {
-      });
+      this.timersService.updateTrack$(this.trackSelected).subscribe();
     } else if (this.trackName.value !== '' && this.trackName.value !== null) {
       let newTrack: Track = {
         elapsed: this.elapsed,
@@ -115,16 +118,17 @@ export class TimerComponent implements OnInit {
     this.trackSelected = track;
     this.elapsed = track.elapsed;
     this.trackName.setValue(track.name);
-    console.table(this.trackSelected);
   }
 
   public deleteTrack(): void {
     if (this.trackSelected !== undefined) {
-      this.timersService.deleteTrack$(this.trackSelected).subscribe();
-      this.trackedTimes$ = this.timersService.getTrackForDay$(this.dayId);
-      this.trackSelected = undefined;
-      this.elapsed = 0;
-      this.trackName.reset();
+      this.timersService.deleteTrack$(this.trackSelected).subscribe((x: Track) => {
+        this.trackedTimes$ = this.timersService.getTrackForDay$(this.dayId);
+        this.trackSelected = undefined;
+        this.elapsed = 0;
+        this.trackName.reset();
+      }
+      );
     }
   }
 }

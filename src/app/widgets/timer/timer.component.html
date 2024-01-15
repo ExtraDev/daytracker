@@ -31,12 +31,10 @@
         </div>
 
         <div class="tracker">
-            <form>
-                <mat-form-field class="full-field" (keydown.enter)="saveTrack()">
-                    <mat-label>Track name</mat-label>
-                    <input matInput placeholder="New track" [formControl]="trackName">
-                </mat-form-field>
-            </form>
+            <mat-form-field class="full-field">
+                <mat-label>Track name</mat-label>
+                <input matInput placeholder="New track" (keydown.enter)="saveTrack()" [formControl]="trackName">
+            </mat-form-field>
             <div class="timed">
                 @for (track of trackedTimes$ | async; track track.id) {
                 <p (click)="selectTrack(track)">
