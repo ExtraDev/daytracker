@@ -1,3 +1,26 @@
 <mat-card>
-    <mat-card-content>{{ note?.note }}</mat-card-content>
+    <mat-card-content>
+        @if (!editMode) {
+        <div [innerHTML]="note?.note">
+            {{ note?.note }}
+        </div>
+        } @else {
+        <ng-container>
+            <mat-form-field class="example-full-width">
+                <textarea matInput rows="7" [formControl]="noteControl"></textarea>
+            </mat-form-field>
+        </ng-container>
+        }
+    </mat-card-content>
+    <mat-card-actions>
+        @if (!editMode) {
+        <button mat-button (click)="toggleEditMode()">
+            <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="edit"></mat-icon>
+        </button>
+        } @else {
+        <button mat-button (click)="toggleEditMode(true)">
+            <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="save"></mat-icon>
+        </button>
+        }
+    </mat-card-actions>
 </mat-card>

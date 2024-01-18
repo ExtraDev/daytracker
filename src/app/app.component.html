@@ -1,36 +1,39 @@
 <div id="container">
-  <div class="widget">
-    <app-timer [dayId]="dayId"></app-timer>
-  </div>
+    <app-date></app-date>
 
-  <div class="widget">
-    <div class="header">
-      <h2>Todolist</h2>
-      <button mat-fab color="warn" class="btn-plus-widget">
-        <mat-icon>add</mat-icon>
-      </button>
+    <div class="widget">
+        <app-timer [dayId]="dayId"></app-timer>
     </div>
 
-    @for (todo of todolist$ | async; track todo.id) {
-    <app-todo [todo]="todo"></app-todo>
-    }
-  </div>
-
-  <div class="widget">
-    <div class="header">
-      <h2>Notes</h2>
-      <button mat-fab color="warn" class="btn-plus-widget">
-        <mat-icon>add</mat-icon>
-      </button>
+    <div class="widget">
+        <div class="header">
+            <h2>Notes</h2>
+            <button mat-fab color="warn" class="btn-plus-widget">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+        @for (note of notes$ | async; track note.id) {
+        <app-note [note]="note"></app-note>
+        }
     </div>
-    @for (note of notes$ | async; track note.id) {
-    <app-note [note]="note"></app-note>
-    }
-  </div>
 
-  <div class="add-button">
-    <button mat-fab color="primary">
-      <mat-icon>add</mat-icon>
-    </button>
-  </div>
+    <div class="widget">
+        <div class="header">
+            <h2>Todolist</h2>
+            <button mat-fab color="warn" class="btn-plus-widget">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+
+        @for (todo of todolist$ | async; track todo.id) {
+        <app-todo [todo]="todo"></app-todo>
+        }
+    </div>
+
+
+    <div class="add-button">
+        <button mat-fab color="primary">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
 </div>

@@ -8,13 +8,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { NoteComponent } from './widgets/note/note.component';
 import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { DateComponent } from './widgets/date/date.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   standalone: true,
-  imports: [AsyncPipe, MatButtonModule, MatIconModule, TodoComponent, TimerComponent, NoteComponent]
+  imports: [AsyncPipe, MatButtonModule, MatIconModule, TodoComponent, TimerComponent, NoteComponent, DateComponent]
 })
 export class AppComponent {
   title = 'daytracker';

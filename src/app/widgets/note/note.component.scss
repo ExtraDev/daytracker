@@ -1,4 +1,38 @@
 mat-card {
     background-color: #ddeff0;
     margin-bottom: 15px;
+    display: flex;
+    flex-direction: row;
+
+    mat-card-content {
+        flex: 2;
+
+        mat-form-field {
+            width: 100%;
+            padding: 0;
+
+            textarea {
+                overflow: hidden;
+                height: fit-content;
+            }
+        }
+    }
+
+    mat-card-actions {
+        text-align: center;
+
+        button {
+            display: flex;
+            align-items: center;
+            // display: none;
+        }
+    }
 }
+
+// mat-card:hover {
+//     mat-card-actions {
+//         button {
+//             display: block;
+//         }
+//     }
+// }

@@ -1,16 +1,41 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { Note } from 'src/app/common/models/note.model';
+import { NotesService } from 'src/app/common/services/note.service';
 
 @Component({
-  selector: 'app-note',
-  standalone: true,
-  templateUrl: './note.component.html',
-  styleUrls: ['./note.component.scss'],
-  imports: [MatCardModule],
+    selector: 'app-note',
+    standalone: true,
+    templateUrl: './note.component.html',
+    styleUrls: ['./note.component.scss'],
+    imports: [MatCardModule, MatButtonModule, MatIconModule, FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule],
 })
 export class NoteComponent {
-  @Input() note?: Note;
+    public noteService = inject(NotesService);
 
-  constructor() { }
+    @Input() note?: Note;
+
+    public editMode = false;
+    public noteControl = new FormControl<string>('');
+
+    constructor() {
+
+    }
+
+    public toggleEditMode(save: boolean = false): void {
+        this.editMode = !this.editMode;
+        if (!save) {
+            this.noteControl.setValue(this.note?.note || '');
+        }
+
+        if (save && this.note) {
+            this.note.note = this.noteControl.value || '';
+            this.noteService.updateNote$(this.note).subscribe(n => console.log(n));
+        }
+    }
 }
