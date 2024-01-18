@@ -23,19 +23,18 @@ export class NoteComponent {
     public editMode = false;
     public noteControl = new FormControl<string>('');
 
-    constructor() {
-
-    }
+    constructor() { }
 
     public toggleEditMode(save: boolean = false): void {
         this.editMode = !this.editMode;
+
         if (!save) {
             this.noteControl.setValue(this.note?.note || '');
         }
 
         if (save && this.note) {
             this.note.note = this.noteControl.value || '';
-            this.noteService.updateNote$(this.note).subscribe(n => console.log(n));
+            this.noteService.updateNote$(this.note).subscribe();
         }
     }
 }
