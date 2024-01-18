@@ -1,20 +1,6 @@
 <div id="container">
-  <h1 id="main-title">Day IT</h1>
-
   <div class="widget">
     <app-timer [dayId]="dayId"></app-timer>
-  </div>
-
-  <div class="widget">
-    <div class="header">
-      <h2>Notes</h2>
-      <button mat-fab color="warn" class="btn-plus-widget">
-        <mat-icon>add</mat-icon>
-      </button>
-    </div>
-    @for (note of notes$ | async; track note.id) {
-    <app-note [note]="note"></app-note>
-    }
   </div>
 
   <div class="widget">
@@ -27,6 +13,18 @@
 
     @for (todo of todolist$ | async; track todo.id) {
     <app-todo [todo]="todo"></app-todo>
+    }
+  </div>
+
+  <div class="widget">
+    <div class="header">
+      <h2>Notes</h2>
+      <button mat-fab color="warn" class="btn-plus-widget">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+    @for (note of notes$ | async; track note.id) {
+    <app-note [note]="note"></app-note>
     }
   </div>
 

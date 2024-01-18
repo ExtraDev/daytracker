@@ -6,7 +6,7 @@
                     {{ convertToTime(elapsed) }}
                 </div>
                 <div class="controls">
-                    <button (click)="startTimer()" mat-mini-fab color="primary" [disabled]="isTracking">
+                    <button (click)="startTimer()" mat-mini-fab color="primary" [disabled]="tickSubscription">
                         <mat-icon>play_arrow</mat-icon>
                     </button>
 
