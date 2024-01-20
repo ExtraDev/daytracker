@@ -66,7 +66,8 @@ export class TimerComponent implements OnInit {
     public saveTrack(): void {
         if (
             this.trackName.value !== '' &&
-            this.trackName.value !== null
+            this.trackName.value !== null &&
+            this.trackSelected === undefined
         ) {
             let newTrack: Track = {
                 elapsed: this.elapsed,
