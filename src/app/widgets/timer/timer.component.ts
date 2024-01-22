@@ -31,11 +31,8 @@ export class TimerComponent implements OnInit {
     trackSelected?: Track;
     trackedTimes$?: Observable<Track[] | undefined>;
 
-    private startTime?: number;
-    private stopDate?: number;
-
-    constructor() {
-    }
+    private startTime: number | undefined;
+    MAX_DELTA_SECONDS = 10;
 
     ngOnInit(): void {
         this.trackedTimes$ = this.timersService.getTrackForDay$(this.dayId);
@@ -43,29 +40,41 @@ export class TimerComponent implements OnInit {
 
     startTimer(): void {
         if (this.tickSubscription === undefined) {
-            this.startTime = Date.now();
+            if (this.startTime === undefined) {
+                this.startTime = Date.now();
+            }
 
             this.tickSubscription = this.tick$.subscribe(() => {
-                // let millis = Date.now() - this.startTime!
-                // this.elapsed = Math.floor(millis / 1000);
+                if (this.elapsed % 60 === 0) {
+
+                    let millis = Date.now() - this.startTime!
+                    let tmpElapsed = Math.floor(millis / 1000);
+
+                    /* Checker le différentiel de temps. 
+                     * S'il correspond plus ou moins, ajuster.
+                     */
+                    if (Math.abs(tmpElapsed - this.elapsed) >= this.MAX_DELTA_SECONDS) {
+                        this.elapsed = tmpElapsed;
+                    }
+                }
+
                 this.elapsed++;
             });
-
         }
     }
 
     pauseTimer(): void {
         if (this.tickSubscription !== undefined) {
-            this.tickSubscription.unsubscribe();
-            this.tickSubscription = undefined;
+            this.stopTickSubscription();
         }
     }
 
     resetTimer(): void {
         if (this.tickSubscription !== undefined) {
             this.elapsed = 0;
-            this.tickSubscription.unsubscribe();
-            this.tickSubscription = undefined;
+            this.stopTickSubscription();
+
+            this.startTime = undefined;
         }
 
         this.trackSelected = undefined;
@@ -106,9 +115,14 @@ export class TimerComponent implements OnInit {
     }
 
     public selectTrack(track: Track): void {
+        this.stopTickSubscription();
+
         this.trackSelected = track;
+
         this.elapsed = track.elapsed;
         this.trackName.setValue(track.name);
+
+        this.startTime = Date.now() - this.elapsed * 1000;
     }
 
     public deleteTrack(): void {
@@ -119,6 +133,11 @@ export class TimerComponent implements OnInit {
             }
             );
         }
+    }
+
+    public stopTickSubscription(): void {
+        this.tickSubscription?.unsubscribe();
+        this.tickSubscription = undefined;
     }
 
     public convertToTime(elapsedSeconds: number): string {

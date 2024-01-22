@@ -17,7 +17,14 @@
       "dayId": 1
     }
   ],
-  "tracks": [],
+  "tracks": [
+    {
+      "elapsed": 1014,
+      "name": "test",
+      "dayId": 1,
+      "id": 1
+    }
+  ],
   "todos": [
     {
       "id": 1,
