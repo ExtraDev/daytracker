@@ -24,11 +24,15 @@ export class TimerComponent implements OnInit {
 
     elapsed: number = 0;
     tick$: Observable<number> = interval(1000);
-    tickSubscription?: Subscription | undefined; // Trouver un type adéquat. Pour moi, ce devrait être un Subscription<number>
-    trackName = new FormControl<string>('');
-    trackSelected?: Track;
 
+    tickSubscription?: Subscription | undefined;
+    trackName = new FormControl<string>('');
+
+    trackSelected?: Track;
     trackedTimes$?: Observable<Track[] | undefined>;
+
+    private startTime?: number;
+    private stopDate?: number;
 
     constructor() {
     }
@@ -39,7 +43,14 @@ export class TimerComponent implements OnInit {
 
     startTimer(): void {
         if (this.tickSubscription === undefined) {
-            this.tickSubscription = this.tick$.subscribe(() => this.elapsed++);
+            this.startTime = Date.now();
+
+            this.tickSubscription = this.tick$.subscribe(() => {
+                // let millis = Date.now() - this.startTime!
+                // this.elapsed = Math.floor(millis / 1000);
+                this.elapsed++;
+            });
+
         }
     }
 
