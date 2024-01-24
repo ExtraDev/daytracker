@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { Note } from 'src/app/common/models/note.model';
 
 @Injectable({
@@ -12,13 +12,13 @@ export class NotesService {
     constructor(private httpClient: HttpClient) { }
 
     public getNotes$(): Observable<Note[] | undefined> {
-        return this.httpClient.get<Note[] | undefined>(this.baseUrl).pipe(
-            tap((notes) => console.log(notes))
-        );
+        return this.httpClient.get<Note[] | undefined>(this.baseUrl).pipe();
     }
 
     public getNoteForDay$(dayId: number): Observable<Note[] | undefined> {
-        return this.httpClient.get<Note[] | undefined>(`${this.baseUrl}?dayId=${dayId}`).pipe();
+        return this.httpClient.get<Note[] | undefined>(`${this.baseUrl}?dayId=${dayId}`).pipe(
+            map(notes => (notes && notes.length === 0) ? undefined : notes)
+        );
     }
 
     public postNote$(note: Note): Observable<Note> {

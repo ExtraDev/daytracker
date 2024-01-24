@@ -1,10 +1,12 @@
 <div id="container">
+
     <app-date></app-date>
 
     <div class="widget">
-        <app-timer [dayId]="dayId"></app-timer>
+        <app-timer></app-timer>
     </div>
 
+    @if(notes$) {
     <div class="widget">
         <div class="header">
             <h2>Notes</h2>
@@ -16,6 +18,7 @@
         <app-note [note]="note"></app-note>
         }
     </div>
+    }
 
     <div class="widget">
         <div class="header">
@@ -36,4 +39,5 @@
             <mat-icon>add</mat-icon>
         </button>
     </div>
+
 </div>

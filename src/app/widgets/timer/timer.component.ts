@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { AsyncPipe } from '@angular/common';
 import { Track } from 'src/app/common/models/track.model';
+import { DaysService } from 'src/app/common/services/day.service';
 
 @Component({
     selector: 'app-timer',
@@ -17,10 +18,11 @@ import { Track } from 'src/app/common/models/track.model';
     styleUrls: ['./timer.component.scss'],
     imports: [AsyncPipe, MatCardModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, ReactiveFormsModule]
 })
-export class TimerComponent implements OnInit {
-    @Input() dayId?: number;
+export class TimerComponent {
+    private dayId?: number;
 
     private timersService = inject(TimersService);
+    private daysService = inject(DaysService);
 
     elapsed: number = 0;
     tick$: Observable<number> = interval(1000);
@@ -33,9 +35,12 @@ export class TimerComponent implements OnInit {
 
     private startTime: number | undefined;
     MAX_DELTA_SECONDS = 10;
+    DELAY_TO_CHECK = 5;
 
-    ngOnInit(): void {
+    constructor() {
+        this.dayId = this.daysService.getActualDayId();
         this.trackedTimes$ = this.timersService.getTrackForDay$(this.dayId);
+        // console.log(this.dayId);
     }
 
     startTimer(): void {
@@ -45,7 +50,7 @@ export class TimerComponent implements OnInit {
             }
 
             this.tickSubscription = this.tick$.subscribe(() => {
-                if (this.elapsed % 60 === 0) {
+                if (this.elapsed % this.DELAY_TO_CHECK === 0) {
 
                     let millis = Date.now() - this.startTime!
                     let tmpElapsed = Math.floor(millis / 1000);
@@ -94,7 +99,8 @@ export class TimerComponent implements OnInit {
                 dayId: this.dayId
             }
 
-            this.timersService.postTrack$(newTrack).subscribe(x => {
+            this.timersService.postTrack$(newTrack).subscribe(track => {
+                console.log(track);
                 this.trackedTimes$ = this.timersService.getTrackForDay$(this.dayId);
             });
         }

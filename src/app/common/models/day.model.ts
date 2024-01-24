@@ -1,6 +1,7 @@
 import { Widget } from "./widget.model";
 
 export interface Day {
-    date?: Date,
+    id?: number,
+    date: string,
     widgets?: Widget[]
 }
