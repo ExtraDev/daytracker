@@ -2,7 +2,7 @@ import { Component, Input, OnInit, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { Observable, Subscription, interval } from 'rxjs';
+import { Observable, Subscription, filter, interval, map, reduce, switchMap, takeUntil } from 'rxjs';
 import { TimersService } from 'src/app/common/services/timer.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -73,10 +73,9 @@ export class TimerComponent implements OnInit {
         if (this.tickSubscription !== undefined) {
             this.elapsed = 0;
             this.stopTickSubscription();
-
-            this.startTime = undefined;
         }
 
+        this.startTime = undefined;
         this.trackSelected = undefined;
         this.trackName.reset();
         this.elapsed = 0;
