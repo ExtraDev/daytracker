@@ -38,7 +38,6 @@ export class AppComponent {
     public timers$?: Observable<Track[] | undefined>;
 
     constructor() {
-        console.log(this.daysService.getActualDayId());
         // check the actual date
         this.daysService.getDateId$(this.daysService.getActualDayId()).pipe(
             tap(day => console.log("My day: ", day))
@@ -56,17 +55,13 @@ export class AppComponent {
                 });
             }
 
-            console.log(this.day);
-
             this.notes$ = this.notesService.getNoteForDay$(this.day!.id!);
             this.todolist$ = this.todosService.getTodoForDay$(this.day!.id!);
             this.timers$ = this.timersService.getTrackForDay$(this.day!.id!);
 
-            console.log(this.notes$);
         });
 
         this.daysService.getDays$().subscribe(days => {
-            console.log("Days: ", days);
         })
     }
 

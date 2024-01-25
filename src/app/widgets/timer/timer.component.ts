@@ -1,8 +1,8 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { Observable, Subscription, filter, interval, map, reduce, switchMap, takeUntil } from 'rxjs';
+import { Observable, Subscription, filter, interval, map, reduce, switchMap, takeUntil, tap } from 'rxjs';
 import { TimersService } from 'src/app/common/services/timer.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -37,10 +37,12 @@ export class TimerComponent {
     MAX_DELTA_SECONDS = 10;
     DELAY_TO_CHECK = 5;
 
+    public totalElapsed = signal(0);
+
     constructor() {
         this.dayId = this.daysService.getActualDayId();
         this.trackedTimes$ = this.timersService.getTrackForDay$(this.dayId);
-        // console.log(this.dayId);
+        this.computeTotalEspased();
     }
 
     startTimer(): void {
@@ -84,6 +86,7 @@ export class TimerComponent {
         this.trackSelected = undefined;
         this.trackName.reset();
         this.elapsed = 0;
+        this.computeTotalEspased();
     }
 
 
@@ -116,6 +119,7 @@ export class TimerComponent {
 
         }
 
+        this.computeTotalEspased();
         this.resetTimer();
     }
 
@@ -135,14 +139,22 @@ export class TimerComponent {
             this.timersService.deleteTrack$(this.trackSelected).subscribe((x: Track) => {
                 this.trackedTimes$ = this.timersService.getTrackForDay$(this.dayId);
                 this.resetTimer();
-            }
-            );
+            });
         }
     }
 
     public stopTickSubscription(): void {
         this.tickSubscription?.unsubscribe();
         this.tickSubscription = undefined;
+    }
+
+    private computeTotalEspased(): void {
+        this.trackedTimes$?.pipe(
+            filter(Boolean),
+            map(tracks => {
+                this.totalElapsed.set(tracks.reduce((acc, track) => acc + track.elapsed, 0))
+            }),
+        ).subscribe();
     }
 
     public convertToTime(elapsedSeconds: number): string {
