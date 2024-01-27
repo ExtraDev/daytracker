@@ -6,6 +6,7 @@ import { TodoComponent } from './widgets/todo/todo.component';
 import { TimerComponent } from './widgets/timer/timer.component';
 import { MatIconModule } from '@angular/material/icon';
 import { NoteComponent } from './widgets/note/note.component';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { DateComponent } from './widgets/date/date.component';
@@ -15,13 +16,16 @@ import { Note } from './common/models/note.model';
 import { Todo } from './common/models/todo.model';
 import { Track } from './common/models/track.model';
 import { Observable, tap } from 'rxjs';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
     standalone: true,
-    imports: [AsyncPipe, MatButtonModule, MatIconModule, TodoComponent, TimerComponent, NoteComponent, DateComponent]
+    imports: [AsyncPipe, MatButtonModule, MatIconModule, TodoComponent, TimerComponent, NoteComponent, DateComponent, MatSidenavModule, MatToolbarModule, MatListModule, MatDividerModule]
 })
 export class AppComponent {
     title = 'daytracker';
@@ -38,7 +42,6 @@ export class AppComponent {
     public timers$?: Observable<Track[] | undefined>;
 
     constructor() {
-        // check the actual date
         this.daysService.getDateId$(this.daysService.getActualDayId()).pipe(
             tap(day => console.log("My day: ", day))
         );

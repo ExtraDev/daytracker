@@ -1,3 +1,25 @@
+/* Mat toolbar */
+mat-toolbar {
+    .example-spacer {
+        flex: 1 1 auto;
+    }
+}
+
+/* Sidebar */
+mat-drawer-container {
+    height: calc(100vh - 64px);
+
+    mat-drawer {
+        min-width: 250px
+    }
+
+    mat-drawer-content {
+        background-color: #f2f9f9;
+        overflow-y: auto;
+    }
+}
+
+/* content */
 #container {
     max-width: 800px;
     margin: auto;
