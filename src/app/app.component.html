@@ -15,16 +15,12 @@
 </mat-toolbar>
 
 <mat-drawer-container class="aside-container">
-
     <mat-drawer mode="side" #drawer opened>
-
         <mat-list>
-            <mat-list-item>Item 1</mat-list-item>
+            @for(day of getDays$ | async; track day.id) {
+            <mat-list-item (click)="selectDay(day)">{{ day.name }}</mat-list-item>
             <mat-divider></mat-divider>
-            <mat-list-item>Item 2</mat-list-item>
-            <mat-divider></mat-divider>
-            <mat-list-item>Item 3</mat-list-item>
-            <mat-divider></mat-divider>
+            }
         </mat-list>
 
         <button class="new-day-button" mat-fab color="primary" (click)="newDay()">
@@ -41,39 +37,10 @@
                 <app-timer></app-timer>
             </div>
 
-            <!-- @if(notes$) {
-            <div class="widget">
-                <div class="header">
-                    <h2>Notes</h2>
-                    <button mat-fab color="warn" class="btn-plus-widget">
-                        <mat-icon>add</mat-icon>
-                    </button>
-                </div>
-                @for (note of notes$ | async; track note.id) {
-                <app-note [note]="note"></app-note>
-                }
-            </div>
-            }
-        
-            <div class="widget">
-                <div class="header">
-                    <h2>Todolist</h2>
-                    <button mat-fab color="warn" class="btn-plus-widget">
-                        <mat-icon>add</mat-icon>
-                    </button>
-                </div>
-        
-                @for (todo of todolist$ | async; track todo.id) {
-                <app-todo [todo]="todo"></app-todo>
-                }
-            </div> -->
-
-
             <button class="add-widget-button" mat-fab color="primary" (click)="addWidget()">
                 <mat-icon>add</mat-icon>
             </button>
 
         </div>
     </mat-drawer-content>
-
 </mat-drawer-container>

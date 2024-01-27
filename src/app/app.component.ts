@@ -15,18 +15,12 @@ import { Day } from './common/models/day.model';
 import { Note } from './common/models/note.model';
 import { Todo } from './common/models/todo.model';
 import { Track } from './common/models/track.model';
-import { Observable, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import {
     MatDialog,
-    MAT_DIALOG_DATA,
-    MatDialogRef,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
     MatDialogModule,
 } from '@angular/material/dialog';
 import { NewdayDialogComponent } from './common/dialog/newday-dialog/newday-dialog.component';
@@ -50,49 +44,34 @@ export class AppComponent {
 
     public day?: Day;
 
-    public notes$?: Observable<Note[] | undefined>;
-    public todolist$?: Observable<Todo[] | undefined>;
-    public timers$?: Observable<Track[] | undefined>;
+    public notes$?: Observable<ReadonlyArray<Note> | undefined>;
+    public todolist$?: Observable<ReadonlyArray<Todo> | undefined>;
+    public timers$?: Observable<ReadonlyArray<Track> | undefined>;
 
-    constructor() {
-        this.daysService.getDateId$(this.daysService.getActualDayId()).pipe(
-            tap(day => console.log("My day: ", day))
-        );
-
-        this.daysService.getDateId$(this.daysService.getActualDayId()).subscribe(day => {
-            if (day) {
-                this.day = day;
-            } else {
-                this.daysService.postDay$({
-                    id: this.daysService.getActualDayId(),
-                    date: this.daysService.getActualDate()
-                }).subscribe(day => {
-                    this.day = day;
-                });
-            }
-
-            this.notes$ = this.notesService.getNoteForDay$(this.day!.id!);
-            this.todolist$ = this.todosService.getTodoForDay$(this.day!.id!);
-            this.timers$ = this.timersService.getTrackForDay$(this.day!.id!);
-
-        });
-
-        this.daysService.getDays$().subscribe(days => {
-        })
-    }
+    public getDays$ = this.daysService.getDays$().pipe();
 
     addWidget(): void {
         console.log("Add widget");
     }
 
     newDay(): void {
-        const dayName: string = 'test :)';
-        const dialogRef = this.dialog.open(NewdayDialogComponent, { data: { dayName: dayName }, });
+        const dialogRef = this.dialog.open(NewdayDialogComponent);
 
         dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                console.log('Dialog result: ', result.value);
+            if (result && result.value) {
+                this.daysService.postDay$(
+                    { name: result.value, date: this.daysService.getActualDate() }
+                ).pipe(
+                    tap(() => {
+                        this.getDays$ = this.daysService.getDays$().pipe();
+                    })
+                ).subscribe();
             }
         })
+
+    }
+
+    selectDay(day: Day): void {
+        console.log(day);
     }
 }

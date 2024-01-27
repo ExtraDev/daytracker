@@ -40,6 +40,10 @@ export class DaysService {
         return parseInt(`${this.date.getDate()}${this.date.getMonth() + 1}${this.date.getFullYear()}`);
     }
 
+    /**
+     * Actual date as format: 14.01.2024
+     * @returns string
+     */
     public getActualDate(): string {
         return `${this.date.getDate()}-${this.date.getMonth() > 10 ? '' : '0'}${this.date.getMonth() + 1}-${this.date.getFullYear()}`;
     }
