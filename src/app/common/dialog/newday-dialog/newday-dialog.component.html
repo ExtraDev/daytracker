@@ -1,0 +1,13 @@
+<div class="dialog-container">
+    <h1 mat-dialog-title>Nouvelle page?</h1>
+    <div mat-dialog-content class="content">
+        <mat-form-field>
+            <mat-label>Donnez lui un nom</mat-label>
+            <input matInput [formControl]="dayName">
+        </mat-form-field>
+    </div>
+    <div mat-dialog-actions class="actions">
+        <button mat-button (click)="closeDialog()">No Thanks</button>
+        <button mat-raised-button color="primary" [disabled]="!dayName.valid" [mat-dialog-close]="dayName">Ok</button>
+    </div>
+</div>

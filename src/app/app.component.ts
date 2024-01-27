@@ -19,16 +19,29 @@ import { Observable, tap } from 'rxjs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
+import {
+    MatDialog,
+    MAT_DIALOG_DATA,
+    MatDialogRef,
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
+    MatDialogModule,
+} from '@angular/material/dialog';
+import { NewdayDialogComponent } from './common/dialog/newday-dialog/newday-dialog.component';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
     standalone: true,
-    imports: [AsyncPipe, MatButtonModule, MatIconModule, TodoComponent, TimerComponent, NoteComponent, DateComponent, MatSidenavModule, MatToolbarModule, MatListModule, MatDividerModule]
+    imports: [AsyncPipe, MatButtonModule, MatIconModule, TodoComponent, TimerComponent, NoteComponent, DateComponent, MatSidenavModule, MatToolbarModule, MatListModule, MatDividerModule, MatDialogModule]
 })
 export class AppComponent {
     title = 'daytracker';
+
+    private dialog = inject(MatDialog);
 
     private daysService = inject(DaysService);
     private notesService = inject(NotesService);
@@ -70,5 +83,16 @@ export class AppComponent {
 
     addWidget(): void {
         console.log("Add widget");
+    }
+
+    newDay(): void {
+        const dayName: string = 'test :)';
+        const dialogRef = this.dialog.open(NewdayDialogComponent, { data: { dayName: dayName }, });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                console.log('Dialog result: ', result.value);
+            }
+        })
     }
 }

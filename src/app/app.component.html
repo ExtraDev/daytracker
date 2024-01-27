@@ -17,13 +17,19 @@
 <mat-drawer-container class="aside-container">
 
     <mat-drawer mode="side" #drawer opened>
+
         <mat-list>
             <mat-list-item>Item 1</mat-list-item>
             <mat-divider></mat-divider>
             <mat-list-item>Item 2</mat-list-item>
             <mat-divider></mat-divider>
             <mat-list-item>Item 3</mat-list-item>
+            <mat-divider></mat-divider>
         </mat-list>
+
+        <button class="new-day-button" mat-fab color="primary" (click)="newDay()">
+            <mat-icon>add</mat-icon>
+        </button>
     </mat-drawer>
 
     <mat-drawer-content>
@@ -63,12 +69,11 @@
             </div> -->
 
 
-            <div class="add-button">
-                <button mat-fab color="primary" (click)="addWidget()">
-                    <mat-icon>add</mat-icon>
-                </button>
-            </div>
+            <button class="add-widget-button" mat-fab color="primary" (click)="addWidget()">
+                <mat-icon>add</mat-icon>
+            </button>
 
         </div>
     </mat-drawer-content>
+
 </mat-drawer-container>
