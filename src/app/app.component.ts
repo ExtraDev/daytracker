@@ -1,7 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { NotesService } from './common/services/note.service';
-import { TodosService } from './common/services/todo.service';
-import { TimersService } from './common/services/timer.service';
 import { TodoComponent } from './widgets/todo/todo.component';
 import { TimerComponent } from './widgets/timer/timer.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,10 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { DateComponent } from './widgets/date/date.component';
 import { DaysService } from './common/services/day.service';
 import { Day } from './common/models/day.model';
-import { Note } from './common/models/note.model';
-import { Todo } from './common/models/todo.model';
-import { Track } from './common/models/track.model';
-import { Observable, map, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
@@ -24,6 +18,7 @@ import {
     MatDialogModule,
 } from '@angular/material/dialog';
 import { NewdayDialogComponent } from './common/dialog/newday-dialog/newday-dialog.component';
+import { ValidationDialogComponent } from './common/dialog/validation-dialog/validation-dialog.component';
 
 @Component({
     selector: 'app-root',
@@ -36,7 +31,6 @@ export class AppComponent {
     title = 'daytracker';
 
     private dialog = inject(MatDialog);
-
     private daysService = inject(DaysService);
 
     public daySelected?: Day;
@@ -64,5 +58,24 @@ export class AppComponent {
     // Doit mettre à jour les widgets pour le jour sélectionner
     selectDay(day: Day): void {
         this.daySelected = day;
+        if (day.id) {
+            this.daysService.getDateId$(day.id).subscribe();
+        }
+    }
+
+    deleteDay(): void {
+        const dialogRef = this.dialog.open(ValidationDialogComponent);
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result && this.daySelected) {
+                console.log(result, this.daySelected?.id);
+                this.daysService.deleteDay(this.daySelected).pipe(
+                    tap(() => {
+                        this.getDays$ = this.daysService.getDays$().pipe();
+                        this.daySelected = undefined;
+                    })
+                ).subscribe();
+            }
+        });
     }
 }

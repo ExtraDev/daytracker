@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 
 @Component({
-    selector: 'app-newday-dialog',
+    selector: 'app-validation-dialog',
     standalone: true,
     imports: [
         MatFormFieldModule,
@@ -16,14 +16,14 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/materia
         ReactiveFormsModule,
         MatDialogModule
     ],
-    templateUrl: './newday-dialog.component.html',
-    styleUrl: './newday-dialog.component.scss'
+    templateUrl: './validation-dialog.component.html',
+    styleUrl: './validation-dialog.component.scss'
 })
-export class NewdayDialogComponent {
-    public dayName = new FormControl('', Validators.required);
+export class ValidationDialogComponent {
+    public validationBox = new FormControl<boolean>(false, Validators.required);
 
     constructor(
-        private dialogRef: MatDialogRef<NewdayDialogComponent>
+        private dialogRef: MatDialogRef<ValidationDialogComponent>
     ) { }
 
     closeDialog(): void {

@@ -3,9 +3,18 @@
         (click)="drawer.toggle()">
         <mat-icon>menu</mat-icon>
     </button>
-    <span>DayAgend | {{ daySelected?.name}}</span>
+    <span>DayAgend</span>
+
+    @if(daySelected){
+    <span> | {{ daySelected.name}}</span>
+    }
 
     <span class="example-spacer"></span>
+    @if(daySelected){
+    <button mat-icon-button class="example-icon favorite-icon" (click)="deleteDay()">
+        <mat-icon>delete</mat-icon>
+    </button>
+    }
     <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
         <mat-icon>favorite</mat-icon>
     </button>

@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, map, tap } from 'rxjs';
 import { Day } from '../models/day.model';
+import { TimersService } from './timer.service';
 
 
 @Injectable({
@@ -10,8 +11,11 @@ import { Day } from '../models/day.model';
 export class DaysService {
     private baseUrl = 'http://localhost:3000/days'
     private date = new Date();
+    private httpClient = inject(HttpClient);
 
-    constructor(private httpClient: HttpClient) { }
+    private timersSerivce = inject(TimersService);
+
+    private day: any = {};
 
     public getDays$(): Observable<Day[] | undefined> {
         return this.httpClient.get<Day[] | undefined>(this.baseUrl).pipe();
@@ -19,11 +23,14 @@ export class DaysService {
 
     public getDateId$(dayId: number): Observable<Day | undefined> {
         return this.httpClient.get<Day | undefined>(`${this.baseUrl}?id=${dayId}`).pipe(
-            map(day => {
-                if (Object.keys(day || {}).length === 0) {
-                    return undefined;
-                }
-                return day;
+            tap(() => {
+                this.timersSerivce.getTrackForDay$(dayId).pipe(
+                    tap((tracks) => {
+                        this.day['TIMER'] = tracks;
+                    })
+                ).subscribe();
+
+                // console.log(this.day);
             })
         );
     }
@@ -34,6 +41,14 @@ export class DaysService {
 
     public updateDay$(day: Day): Observable<Day> {
         return this.httpClient.put<Day>(this.baseUrl, day).pipe();
+    }
+
+    public deleteDay(day: Day): Observable<Day> {
+        return this.httpClient.delete<Day>(`${this.baseUrl}/${day.id}`).pipe(
+            tap(() => {
+                console.log('Remove all data related to tad:', day.id);
+            })
+        );
     }
 
     public getActualDayId(): number {
