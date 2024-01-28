@@ -38,15 +38,8 @@ export class AppComponent {
     private dialog = inject(MatDialog);
 
     private daysService = inject(DaysService);
-    private notesService = inject(NotesService);
-    private todosService = inject(TodosService);
-    private timersService = inject(TimersService);
 
-    public day?: Day;
-
-    public notes$?: Observable<ReadonlyArray<Note> | undefined>;
-    public todolist$?: Observable<ReadonlyArray<Todo> | undefined>;
-    public timers$?: Observable<ReadonlyArray<Track> | undefined>;
+    public daySelected?: Day;
 
     public getDays$ = this.daysService.getDays$().pipe();
 
@@ -62,16 +55,14 @@ export class AppComponent {
                 this.daysService.postDay$(
                     { name: result.value, date: this.daysService.getActualDate() }
                 ).pipe(
-                    tap(() => {
-                        this.getDays$ = this.daysService.getDays$().pipe();
-                    })
+                    tap(() => this.getDays$ = this.daysService.getDays$().pipe())
                 ).subscribe();
             }
         })
-
     }
 
+    // Doit mettre à jour les widgets pour le jour sélectionner
     selectDay(day: Day): void {
-        console.log(day);
+        this.daySelected = day;
     }
 }

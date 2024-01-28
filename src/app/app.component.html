@@ -3,7 +3,7 @@
         (click)="drawer.toggle()">
         <mat-icon>menu</mat-icon>
     </button>
-    <span>DayAgend</span>
+    <span>DayAgend | {{ daySelected?.name}}</span>
 
     <span class="example-spacer"></span>
     <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
@@ -29,12 +29,13 @@
     </mat-drawer>
 
     <mat-drawer-content>
+        @if(daySelected) {
         <div id="container">
 
             <app-date></app-date>
 
             <div class="widget">
-                <app-timer></app-timer>
+                <app-timer [dayId]="daySelected.id"></app-timer>
             </div>
 
             <button class="add-widget-button" mat-fab color="primary" (click)="addWidget()">
@@ -42,5 +43,6 @@
             </button>
 
         </div>
+        }
     </mat-drawer-content>
 </mat-drawer-container>

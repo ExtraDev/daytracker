@@ -1,15 +1,14 @@
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { Observable, Subscription, filter, interval, map, reduce, switchMap, takeUntil, tap } from 'rxjs';
+import { Observable, Subscription, filter, interval, map, tap } from 'rxjs';
 import { TimersService } from 'src/app/common/services/timer.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { AsyncPipe } from '@angular/common';
 import { Track } from 'src/app/common/models/track.model';
-import { DaysService } from 'src/app/common/services/day.service';
 
 @Component({
     selector: 'app-timer',
@@ -18,11 +17,10 @@ import { DaysService } from 'src/app/common/services/day.service';
     styleUrls: ['./timer.component.scss'],
     imports: [AsyncPipe, MatCardModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, ReactiveFormsModule]
 })
-export class TimerComponent {
-    private dayId?: number;
+export class TimerComponent implements OnChanges {
+    @Input() dayId?: number;
 
     private timersService = inject(TimersService);
-    private daysService = inject(DaysService);
 
     elapsed: number = 0;
     tick$: Observable<number> = interval(1000);
@@ -31,7 +29,7 @@ export class TimerComponent {
     trackName = new FormControl<string>('');
 
     trackSelected?: Track;
-    trackedTimes$?: Observable<Track[] | undefined>;
+    trackedTimes$?: Observable<Track[] | undefined> = this.timersService.getTrackForDay$(this.dayId);
 
     private startTime: number | undefined;
     MAX_DELTA_SECONDS = 10;
@@ -39,10 +37,12 @@ export class TimerComponent {
 
     public totalElapsed = signal(0);
 
-    constructor() {
-        this.dayId = this.daysService.getActualDayId();
-        this.trackedTimes$ = this.timersService.getTrackForDay$(this.dayId);
-        this.computeTotalEspased();
+    ngOnChanges(changes: SimpleChanges): void {
+        // Suis pas fan de ça, voir comment s'en passer
+        if ('dayId' in changes) {
+            this.trackedTimes$ = this.timersService.getTrackForDay$(this.dayId);
+            this.computeTotalEspased();
+        }
     }
 
     startTimer(): void {
