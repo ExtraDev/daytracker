@@ -4,10 +4,19 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "electron": "ng build && electron electron/main.js",
+    "electron:build": "ng build && electron-builder",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "api": "json-server --watch src/app/common/mock/database.json"
+  },
+  "build": {
+    "appId": "com.example.angular-electron",
+    "productName": "AngularElectronApp",
+    "directories": {
+        "output": "dist-electron"
+    }
   },
   "private": true,
   "dependencies": {
@@ -29,7 +38,10 @@
     "@angular-devkit/build-angular": "^19.2.1",
     "@angular/cli": "~19.2.1",
     "@angular/compiler-cli": "^19.2.1",
+    "@electron/remote": "^2.1.2",
     "@types/jasmine": "~4.3.0",
+    "electron": "^35.0.0",
+    "electron-builder": "^25.1.8",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
