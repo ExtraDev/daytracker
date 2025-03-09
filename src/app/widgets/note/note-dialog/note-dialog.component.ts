@@ -14,11 +14,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  selector: 'app-note-dialog',
-  standalone: true,
-  imports: [MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule],
-  templateUrl: './note-dialog.component.html',
-  styleUrl: './note-dialog.component.scss'
+    selector: 'app-note-dialog',
+    imports: [MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule],
+    templateUrl: './note-dialog.component.html',
+    styleUrl: './note-dialog.component.scss'
 })
 export class NoteDialogComponent {
   constructor(

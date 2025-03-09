@@ -7,7 +7,6 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/materia
 
 @Component({
     selector: 'app-newday-dialog',
-    standalone: true,
     imports: [
         MatFormFieldModule,
         MatInputModule,

@@ -3,7 +3,6 @@ import { Component, inject } from '@angular/core';
 
 @Component({
     selector: 'app-date',
-    standalone: true,
     imports: [DatePipe],
     templateUrl: './date.component.html',
     styleUrl: './date.component.scss'

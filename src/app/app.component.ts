@@ -1,30 +1,29 @@
-import { Component, inject } from '@angular/core';
-import { TodoComponent } from './widgets/todo/todo.component';
-import { TimerComponent } from './widgets/timer/timer.component';
-import { MatIconModule } from '@angular/material/icon';
-import { NoteComponent } from './widgets/note/note.component';
-import { MatSidenavModule } from '@angular/material/sidenav';
 import { AsyncPipe } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { DateComponent } from './widgets/date/date.component';
-import { DaysService, FullDay } from './common/services/day.service';
-import { Day } from './common/models/day.model';
-import { Observable, Subject, tap } from 'rxjs';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatListModule } from '@angular/material/list';
 import {
     MatDialog,
     MatDialogModule,
 } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { Observable, Subject, tap } from 'rxjs';
 import { NewdayDialogComponent } from './common/dialog/newday-dialog/newday-dialog.component';
 import { ValidationDialogComponent } from './common/dialog/validation-dialog/validation-dialog.component';
+import { Day } from './common/models/day.model';
+import { DaysService, FullDay } from './common/services/day.service';
+import { DateComponent } from './widgets/date/date.component';
+import { NoteComponent } from './widgets/note/note.component';
+import { TimerComponent } from './widgets/timer/timer.component';
+import { TodoComponent } from './widgets/todo/todo.component';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
-    standalone: true,
     imports: [AsyncPipe, MatButtonModule, MatIconModule, TodoComponent, TimerComponent, NoteComponent, DateComponent, MatSidenavModule, MatToolbarModule, MatListModule, MatDividerModule, MatDialogModule]
 })
 export class AppComponent {

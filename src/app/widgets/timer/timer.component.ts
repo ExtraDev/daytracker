@@ -12,7 +12,6 @@ import { Track } from 'src/app/common/models/track.model';
 
 @Component({
     selector: 'app-timer',
-    standalone: true,
     templateUrl: './timer.component.html',
     styleUrls: ['./timer.component.scss'],
     imports: [AsyncPipe, MatCardModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, ReactiveFormsModule]

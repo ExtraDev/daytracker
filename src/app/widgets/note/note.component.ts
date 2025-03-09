@@ -10,10 +10,9 @@ import { NotesService } from 'src/app/common/services/note.service';
 
 @Component({
     selector: 'app-note',
-    standalone: true,
     templateUrl: './note.component.html',
     styleUrls: ['./note.component.scss'],
-    imports: [MatCardModule, MatButtonModule, MatIconModule, FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule],
+    imports: [MatCardModule, MatButtonModule, MatIconModule, FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule]
 })
 export class NoteComponent {
     public noteService = inject(NotesService);

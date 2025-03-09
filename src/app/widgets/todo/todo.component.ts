@@ -7,7 +7,6 @@ import { Status, Todo } from 'src/app/common/models/todo.model';
     selector: 'app-todo',
     templateUrl: './todo.component.html',
     styleUrls: ['./todo.component.scss'],
-    standalone: true,
     imports: [MatCardModule, MatButtonModule]
 })
 export class TodoComponent {
