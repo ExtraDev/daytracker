@@ -1,9 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, map, tap } from 'rxjs';
+import { Observable, filter, map, of, switchMap, tap } from 'rxjs';
 import { Day } from '../models/day.model';
 import { TimersService } from './timer.service';
+import { Track } from '../models/track.model';
 
+export interface FullDay {
+    day?: Day,
+    timer?: Track[]
+}
 
 @Injectable({
     providedIn: 'root'
@@ -18,7 +23,17 @@ export class DaysService {
     private day: any = {};
 
     public getDays$(): Observable<Day[] | undefined> {
-        return this.httpClient.get<Day[] | undefined>(this.baseUrl).pipe();
+        return this.httpClient.get<Day[] | undefined>(this.baseUrl).pipe(
+            map(days => {
+                // console.log(days);
+                if (days) {
+                    return days.filter(day => day.name !== undefined && day.name !== "")
+                        .sort((dayA, dayB) => dayA.id! < dayB.id! ? -1 : 1);
+                } else {
+                    return undefined;
+                }
+            })
+        );
     }
 
     public getDateId$(dayId: number): Observable<Day | undefined> {
@@ -43,7 +58,7 @@ export class DaysService {
         return this.httpClient.put<Day>(this.baseUrl, day).pipe();
     }
 
-    public deleteDay(day: Day): Observable<Day> {
+    public deleteDay$(day: Day): Observable<Day> {
         return this.httpClient.delete<Day>(`${this.baseUrl}/${day.id}`).pipe(
             tap(() => {
                 console.log('Remove all data related to tad:', day.id);

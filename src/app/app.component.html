@@ -9,6 +9,8 @@
     <span> | {{ daySelected.name}}</span>
     }
 
+    <span>{{getFullDays$ | async}}</span>
+
     <span class="example-spacer"></span>
     @if(daySelected){
     <button mat-icon-button class="example-icon favorite-icon" (click)="deleteDay()">
@@ -27,7 +29,7 @@
     <mat-drawer mode="side" #drawer opened>
         <mat-list>
             @for(day of getDays$ | async; track day.id) {
-            <mat-list-item (click)="selectDay(day)">{{ day.name }}</mat-list-item>
+            <mat-list-item (click)="daySubject$.next(day)">{{ day.name }}</mat-list-item>
             <mat-divider></mat-divider>
             }
         </mat-list>

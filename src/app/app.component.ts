@@ -7,9 +7,9 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { DateComponent } from './widgets/date/date.component';
-import { DaysService } from './common/services/day.service';
+import { DaysService, FullDay } from './common/services/day.service';
 import { Day } from './common/models/day.model';
-import { tap } from 'rxjs';
+import { Observable, Subject, tap } from 'rxjs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
@@ -35,7 +35,20 @@ export class AppComponent {
 
     public daySelected?: Day;
 
+    public daySubject$ = new Subject<Day>();
+    public getFullDays$ = new Observable<FullDay[] | undefined>();
+
     public getDays$ = this.daysService.getDays$().pipe();
+
+    constructor() {
+        this.daySubject$.pipe(
+            tap((day) => this.daySelected = day)
+        ).subscribe();
+
+        // this.getFullDays$ = this.daysService.getDaysAndTimer$().pipe(
+        //     tap(days => console.log("full days", days))
+        // );
+    }
 
     addWidget(): void {
         console.log("Add widget");
@@ -55,21 +68,13 @@ export class AppComponent {
         })
     }
 
-    // Doit mettre à jour les widgets pour le jour sélectionner
-    selectDay(day: Day): void {
-        this.daySelected = day;
-        if (day.id) {
-            this.daysService.getDateId$(day.id).subscribe();
-        }
-    }
-
     deleteDay(): void {
         const dialogRef = this.dialog.open(ValidationDialogComponent);
 
         dialogRef.afterClosed().subscribe(result => {
             if (result && this.daySelected) {
                 console.log(result, this.daySelected?.id);
-                this.daysService.deleteDay(this.daySelected).pipe(
+                this.daysService.deleteDay$(this.daySelected).pipe(
                     tap(() => {
                         this.getDays$ = this.daysService.getDays$().pipe();
                         this.daySelected = undefined;
