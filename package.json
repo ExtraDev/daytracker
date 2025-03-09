@@ -15,7 +15,7 @@
     "appId": "com.example.angular-electron",
     "productName": "AngularElectronApp",
     "directories": {
-        "output": "dist-electron"
+      "output": "dist-electron"
     }
   },
   "private": true,
@@ -43,6 +43,7 @@
     "electron": "^35.0.0",
     "electron-builder": "^25.1.8",
     "jasmine-core": "~4.6.0",
+    "json-server": "^1.0.0-beta.3",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
