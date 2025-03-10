@@ -19,11 +19,6 @@
       "name": "09-03-2025",
       "date": "9-03-2025",
       "id": "l4_OIEe"
-    },
-    {
-      "id": "cc03",
-      "name": "test",
-      "date": "9-03-2025"
     }
   ],
   "notes": [
@@ -39,12 +34,6 @@
     }
   ],
   "tracks": [
-    {
-      "elapsed": 1024,
-      "name": "Saved let's gooooo",
-      "dayId": 2312024,
-      "id": "1"
-    },
     {
       "elapsed": 1,
       "name": "test",
@@ -122,7 +111,7 @@
       "id": "3e61",
       "elapsed": 2,
       "name": "new test",
-      "dayId": "cc03"
+      "dayId": null
     }
   ],
   "todos": [

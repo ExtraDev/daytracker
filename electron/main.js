@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Tray, Menu } = require('electron');
 const { spawn } = require('child_process');
 const path = require('path');
 
@@ -30,13 +30,19 @@ app.whenReady().then(() => {
         },
     });
 
-    //mainWindow.webContents.openDevTools();
-
-    // globalShortcut.register('CommandOrControl+R', () => {
-    //     mainWindow.reload();
-    // });
-
     mainWindow.loadFile(path.join(__dirname, '../dist/daytracker/browser/index.html'));
+
+    tray = new Tray(path.join(__dirname, 'assets', 'chronometer.png')); // Remplace avec ton icône
+    const contextMenu = Menu.buildFromTemplate([
+        { label: 'Start', click: () => { } },
+        { label: 'Pause', click: () => { } },
+        { type: 'separator' },
+        { label: 'Quitter', click: () => app.quit() }
+    ]);
+    tray.setToolTip('DayTracker');
+    tray.setTitle(`Task name`);
+
+    tray.setContextMenu(contextMenu);
 
     mainWindow.on('closed', () => {
         mainWindow = null;
