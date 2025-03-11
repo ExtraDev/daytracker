@@ -1,14 +1,14 @@
-import { Component, Input, OnChanges, SimpleChanges, inject, signal } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { Observable, Subscription, filter, interval, map, tap } from 'rxjs';
-import { TimersService } from 'src/app/common/services/timer.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { AsyncPipe } from '@angular/common';
+import { Observable, Subscription, filter, interval, map } from 'rxjs';
 import { Track } from 'src/app/common/models/track.model';
+import { TimersService } from 'src/app/common/services/timer.service';
 
 @Component({
     selector: 'app-timer',
@@ -16,7 +16,7 @@ import { Track } from 'src/app/common/models/track.model';
     styleUrls: ['./timer.component.scss'],
     imports: [AsyncPipe, MatCardModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, ReactiveFormsModule]
 })
-export class TimerComponent implements OnChanges {
+export class TimerComponent implements OnChanges, OnInit {
     @Input() dayId?: number;
 
     private timersService = inject(TimersService);
@@ -35,6 +35,13 @@ export class TimerComponent implements OnChanges {
     DELAY_TO_CHECK = 5;
 
     public totalElapsed = signal(0);
+
+    ngOnInit(): void {
+        if ((window as any).electron) {
+            (window as any).electron.onStartTimer(() => this.startTimer());
+            (window as any).electron.onPauseTimer(() => this.pauseTimer());
+        }
+    }
 
     ngOnChanges(changes: SimpleChanges): void {
         // Suis pas fan de ça, voir comment s'en passer
@@ -63,6 +70,8 @@ export class TimerComponent implements OnChanges {
                         this.elapsed = tmpElapsed;
                     }
                 }
+
+                this.updateTray();
 
                 this.elapsed++;
             });
@@ -174,5 +183,11 @@ export class TimerComponent implements OnChanges {
         else { resSeconds = seconds.toString() }
 
         return resHours + ":" + resMinutes + ":" + resSeconds;
+    }
+
+    private updateTray() {
+        if ((window as any).electron) {
+            (window as any).electron.updateTimer(this.convertToTime(this.elapsed));
+        }
     }
 }
