@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Observable, Subscription, filter, interval, map } from 'rxjs';
 import { Track } from 'src/app/common/models/track.model';
-import { TimersService } from 'src/app/common/services/timer.service';
+import { TracksService } from 'src/app/common/services/tracks.service';
 
 @Component({
     selector: 'app-timer',
@@ -19,7 +19,7 @@ import { TimersService } from 'src/app/common/services/timer.service';
 export class TimerComponent implements OnChanges, OnInit {
     @Input() dayId?: number;
 
-    private timersService = inject(TimersService);
+    private timersService = inject(TracksService);
 
     elapsed: number = 0;
     tick$: Observable<number> = interval(1000);
@@ -71,9 +71,8 @@ export class TimerComponent implements OnChanges, OnInit {
                     }
                 }
 
-                this.updateTray();
-
                 this.elapsed++;
+                this.updateTray();
             });
         }
     }
@@ -82,6 +81,7 @@ export class TimerComponent implements OnChanges, OnInit {
         if (this.tickSubscription !== undefined) {
             this.stopTickSubscription();
         }
+        this.updateTray();
     }
 
     resetTimer(): void {
@@ -95,6 +95,7 @@ export class TimerComponent implements OnChanges, OnInit {
         this.trackName.reset();
         this.elapsed = 0;
         this.computeTotalEspased();
+        this.updateTray();
     }
 
 

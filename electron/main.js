@@ -7,6 +7,8 @@ let jsonServerProcess;
 
 app.commandLine.appendSwitch('disable-background-timer-throttling');
 app.commandLine.appendSwitch('disable-features', 'AutofillServerCommunication');
+app.commandLine.appendSwitch('disable-features', 'AutofillServerCommunication');
+
 
 app.whenReady().then(() => {
     // Lancer json-server
@@ -35,8 +37,8 @@ app.whenReady().then(() => {
 
     tray = new Tray(path.join(__dirname, 'assets', 'chronometer.png')); // Remplace avec ton icône
     const contextMenu = Menu.buildFromTemplate([
-        { label: 'Start', click: () => { } },
-        { label: 'Pause', click: () => { } },
+        { label: 'Démarrer', enabled: false },
+        { label: 'Pause', enabled: false },
         { type: 'separator' },
         { label: 'Quitter', click: () => app.quit() }
     ]);
@@ -53,7 +55,7 @@ app.whenReady().then(() => {
 
     // 🔄 Fonction pour mettre à jour le texte du tray
     function updateTrayText(timerValue) {
-        tray.setTitle(`⏳ ${timerValue}`);
+        tray.setTitle(`${timerValue}`);
     }
 
     mainWindow.on('closed', () => {

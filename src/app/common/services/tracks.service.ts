@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { Track } from '../models/track.model';
-import { Observable, tap } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
-export class TimersService {
+export class TracksService {
     private baseUrl = 'http://localhost:3000/tracks'
 
     constructor(private httpClient: HttpClient) { }

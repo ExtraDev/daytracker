@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, filter, map, of, switchMap, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { Day } from '../models/day.model';
-import { TimersService } from './timer.service';
 import { Track } from '../models/track.model';
+import { TracksService } from './tracks.service';
 
 export interface FullDay {
     day?: Day,
@@ -18,7 +18,7 @@ export class DaysService {
     private date = new Date();
     private httpClient = inject(HttpClient);
 
-    private timersSerivce = inject(TimersService);
+    private timersSerivce = inject(TracksService);
 
     private day: any = {};
 
