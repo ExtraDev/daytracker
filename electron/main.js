@@ -33,15 +33,16 @@ app.whenReady().then(() => {
     });
 
     mainWindow.loadFile(path.join(__dirname, '../dist/daytracker/browser/index.html'));
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 
-    tray = new Tray(path.join(__dirname, 'assets', 'chronometer.png')); // Remplace avec ton icône
     const contextMenu = Menu.buildFromTemplate([
         { label: 'Démarrer', enabled: false },
         { label: 'Pause', enabled: false },
         { type: 'separator' },
         { label: 'Quitter', click: () => app.quit() }
     ]);
+
+    tray = new Tray(path.join(__dirname, 'assets', 'chronometer.png')); // Remplace avec ton icône
     tray.setToolTip('DayTracker');
     tray.setTitle(`Task name`);
     tray.setContextMenu(contextMenu);

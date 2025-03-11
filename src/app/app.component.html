@@ -6,7 +6,7 @@
     <span>DayAgend</span>
 
     @if(daySelected){
-    <span> | {{ daySelected.name}}</span>
+    <span>&nbsp;&nbsp;- {{ daySelected.name}}</span>
     }
 
     <span>{{getFullDays$ | async}}</span>
@@ -33,27 +33,28 @@
             <mat-divider></mat-divider>
             }
         </mat-list>
-
         <button class="new-day-button" mat-fab color="primary" (click)="newDay()">
             <mat-icon>add</mat-icon>
         </button>
     </mat-drawer>
-
     <mat-drawer-content>
-        @if(daySelected) {
-        <div id="container">
-
-            <app-date></app-date>
-
-            <div class="widget">
-                <app-timer [dayId]="daySelected.id"></app-timer>
-            </div>
-
-            <button class="add-widget-button" mat-fab color="primary" (click)="addWidget()">
-                <mat-icon>add</mat-icon>
-            </button>
-
-        </div>
-        }
+        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+            @if(daySelected) {
+            <mat-tab label="Timer">
+                <div id="container">
+                    <app-date></app-date>
+                    <div class="widget">
+                        <app-timer [dayId]="daySelected.id"></app-timer>
+                    </div>
+                </div>
+            </mat-tab>
+            <mat-tab label="Todos">
+                <app-todo></app-todo>
+            </mat-tab>
+            <mat-tab label="Notes">
+                <app-note></app-note>
+            </mat-tab>
+            }
+        </mat-tab-group>
     </mat-drawer-content>
 </mat-drawer-container>

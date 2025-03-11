@@ -9,6 +9,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Observable, Subject, tap } from 'rxjs';
 import { NewdayDialogComponent } from './common/dialog/newday-dialog/newday-dialog.component';
@@ -24,7 +25,7 @@ import { TodoComponent } from './widgets/todo/todo.component';
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
-    imports: [AsyncPipe, MatButtonModule, MatIconModule, TodoComponent, TimerComponent, NoteComponent, DateComponent, MatSidenavModule, MatToolbarModule, MatListModule, MatDividerModule, MatDialogModule]
+    imports: [AsyncPipe, MatButtonModule, MatIconModule, TodoComponent, TimerComponent, NoteComponent, DateComponent, MatSidenavModule, MatToolbarModule, MatListModule, MatDividerModule, MatDialogModule, MatTabsModule]
 })
 export class AppComponent {
     title = 'daytracker';
