@@ -1,12 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, Input, OnChanges, OnInit, SimpleChanges, inject, signal } from '@angular/core';
+import { Component, Input, NgZone, OnChanges, OnInit, SimpleChanges, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { Observable, Subscription, filter, interval, map } from 'rxjs';
+import { Observable, Subscription, filter, interval, map, tap } from 'rxjs';
 import { Track } from 'src/app/common/models/track.model';
 import { TimerService } from 'src/app/common/services/timer.service';
 import { TracksService } from 'src/app/common/services/tracks.service';
@@ -22,6 +22,7 @@ export class TimerComponent implements OnChanges, OnInit {
 
     private tracksService = inject(TracksService);
     private timerService = inject(TimerService);
+    private ngZone = inject(NgZone);
 
     protected trackSaved = true;
     tick$: Observable<number> = interval(1000);
@@ -30,36 +31,49 @@ export class TimerComponent implements OnChanges, OnInit {
     trackName = new FormControl<string>('');
 
     trackSelected?: Track;
-    trackedTimes$?: Observable<Track[] | undefined> = this.tracksService.getTrackForDay$(this.dayId);
+    trackedTimes$?: Observable<Track[] | undefined> = this.tracksService.getTrackForDay$(this.dayId).pipe(
+        tap(tracks => {
+            if ((window as any).electron) {
+                (window as any).electron.updateTracks(tracks);
+                console.log(tracks);
+            }
+        })
+    );
 
     public totalElapsed = signal(0);
 
-    ngOnInit(): void {
+
+    public ngOnInit(): void {
         if ((window as any).electron) {
-            (window as any).electron.onStartTimer(() => this.startTimer());
-            (window as any).electron.onPauseTimer(() => this.pauseTimer());
+            (window as any).electron.onStartTimer(() => {
+                this.ngZone.run(() => this.startTimer());
+            });
+
+            (window as any).electron.onPauseTimer(() => {
+                this.ngZone.run(() => this.pauseTimer());
+            });
         }
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        // Suis pas fan de ça, voir comment s'en passer
         if ('dayId' in changes) {
             this.trackedTimes$ = this.tracksService.getTrackForDay$(this.dayId);
             this.computeTotalEspased();
         }
     }
 
-    startTimer(): void {
+    public startTimer(): void {
         this.timerService.start();
         this.trackSaved = false;
+        this.updateTray();
     }
 
-    pauseTimer(): void {
+    public pauseTimer(): void {
         this.timerService.stop();
         this.updateTray();
     }
 
-    resetTimer(): void {
+    public resetTimer(): void {
         this.timerService.reset();
 
         this.trackSelected = undefined;

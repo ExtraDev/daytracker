@@ -39,7 +39,7 @@ export class AppComponent {
     public daySubject$ = new Subject<Day>();
     public getFullDays$ = new Observable<FullDay[] | undefined>();
 
-    public getDays$ = this.daysService.getDays$().pipe();
+    public getDays$ = this.daysService.getDays$();
 
     private timerService = inject(TimerService);
 
@@ -56,11 +56,11 @@ export class AppComponent {
         // );
     }
 
-    addWidget(): void {
+    public addWidget(): void {
         console.log("Add widget");
     }
 
-    newDay(): void {
+    public newDay(): void {
         const dialogRef = this.dialog.open(NewdayDialogComponent);
 
         dialogRef.afterClosed().subscribe(result => {
@@ -74,7 +74,7 @@ export class AppComponent {
         })
     }
 
-    deleteDay(): void {
+    public deleteDay(): void {
         const dialogRef = this.dialog.open(ValidationDialogComponent);
 
         dialogRef.afterClosed().subscribe(result => {

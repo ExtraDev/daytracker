@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { Observable, Subject, tap } from 'rxjs';
 import { Track } from '../models/track.model';
 
 @Injectable({
@@ -8,11 +8,14 @@ import { Track } from '../models/track.model';
 })
 export class TracksService {
     private baseUrl = 'http://localhost:3000/tracks'
+    private httpClient = inject(HttpClient);
 
-    constructor(private httpClient: HttpClient) { }
+    protected selectedTracks$ = new Subject<Track[] | undefined>;
 
     public getTracks$(): Observable<Track[] | undefined> {
-        return this.httpClient.get<Track[] | undefined>(this.baseUrl).pipe();
+        return this.httpClient.get<Track[] | undefined>(this.baseUrl).pipe(
+            tap(tracks => this.selectedTracks$.next(tracks))
+        );
     }
 
     public getTrackForDay$(dayId?: number): Observable<Track[] | undefined> {

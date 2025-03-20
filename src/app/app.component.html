@@ -3,7 +3,7 @@
         (click)="drawer.toggle()">
         <mat-icon>menu</mat-icon>
     </button>
-    <span>DayAgend</span>
+    <span>DayAgent</span>
 
     @if(daySelected){
     <span>&nbsp;&nbsp;- {{ daySelected.name}}</span>
@@ -17,12 +17,12 @@
         <mat-icon>delete</mat-icon>
     </button>
     }
-    <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+    <!-- <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
         <mat-icon>favorite</mat-icon>
     </button>
     <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
         <mat-icon>share</mat-icon>
-    </button>
+    </button> -->
 </mat-toolbar>
 
 <mat-drawer-container class="aside-container">
