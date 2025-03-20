@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Observable, Subscription, filter, interval, map } from 'rxjs';
 import { Track } from 'src/app/common/models/track.model';
+import { TimerService } from 'src/app/common/services/timer.service';
 import { TracksService } from 'src/app/common/services/tracks.service';
 
 @Component({
@@ -19,20 +20,17 @@ import { TracksService } from 'src/app/common/services/tracks.service';
 export class TimerComponent implements OnChanges, OnInit {
     @Input() dayId?: number;
 
-    private timersService = inject(TracksService);
+    private tracksService = inject(TracksService);
+    private timerService = inject(TimerService);
 
-    elapsed: number = 0;
+    protected trackSaved = true;
     tick$: Observable<number> = interval(1000);
 
     tickSubscription?: Subscription | undefined;
     trackName = new FormControl<string>('');
 
     trackSelected?: Track;
-    trackedTimes$?: Observable<Track[] | undefined> = this.timersService.getTrackForDay$(this.dayId);
-
-    private startTime: number | undefined;
-    MAX_DELTA_SECONDS = 10;
-    DELAY_TO_CHECK = 5;
+    trackedTimes$?: Observable<Track[] | undefined> = this.tracksService.getTrackForDay$(this.dayId);
 
     public totalElapsed = signal(0);
 
@@ -46,88 +44,63 @@ export class TimerComponent implements OnChanges, OnInit {
     ngOnChanges(changes: SimpleChanges): void {
         // Suis pas fan de ça, voir comment s'en passer
         if ('dayId' in changes) {
-            this.trackedTimes$ = this.timersService.getTrackForDay$(this.dayId);
+            this.trackedTimes$ = this.tracksService.getTrackForDay$(this.dayId);
             this.computeTotalEspased();
         }
     }
 
     startTimer(): void {
-        if (this.tickSubscription === undefined) {
-            if (this.startTime === undefined) {
-                this.startTime = Date.now();
-            }
-
-            this.tickSubscription = this.tick$.subscribe(() => {
-                if (this.elapsed % this.DELAY_TO_CHECK === 0) {
-
-                    let millis = Date.now() - this.startTime!
-                    let tmpElapsed = Math.floor(millis / 1000);
-
-                    /* Checker le différentiel de temps. 
-                     * S'il correspond plus ou moins, ajuster.
-                     */
-                    if (Math.abs(tmpElapsed - this.elapsed) >= this.MAX_DELTA_SECONDS) {
-                        this.elapsed = tmpElapsed;
-                    }
-                }
-
-                this.elapsed++;
-                this.updateTray();
-            });
-        }
+        this.timerService.start();
+        this.trackSaved = false;
     }
 
     pauseTimer(): void {
-        if (this.tickSubscription !== undefined) {
-            this.stopTickSubscription();
-        }
+        this.timerService.stop();
         this.updateTray();
     }
 
     resetTimer(): void {
-        if (this.tickSubscription !== undefined) {
-            this.elapsed = 0;
-            this.stopTickSubscription();
-        }
+        this.timerService.reset();
 
-        this.startTime = undefined;
         this.trackSelected = undefined;
         this.trackName.reset();
-        this.elapsed = 0;
         this.computeTotalEspased();
         this.updateTray();
     }
 
 
     public saveTrack(): void {
+        /* CREATE */
         if (
             this.trackName.value !== '' &&
             this.trackName.value !== null &&
             this.trackSelected === undefined
         ) {
             let newTrack: Track = {
-                elapsed: this.elapsed,
+                elapsed: this.timerService.getElapsedTime(),
                 name: this.trackName.value || '',
                 dayId: this.dayId
             }
 
-            this.timersService.postTrack$(newTrack).subscribe(track => {
+            this.tracksService.postTrack$(newTrack).subscribe(track => {
                 console.log(track);
-                this.trackedTimes$ = this.timersService.getTrackForDay$(this.dayId);
+                this.trackedTimes$ = this.tracksService.getTrackForDay$(this.dayId);
             });
         }
 
+        /* SAVE */
         if (
             this.trackSelected !== undefined &&
             this.trackName.value !== null
         ) {
-            this.trackSelected.elapsed = this.elapsed;
-            this.trackSelected.name = this.trackName.value;
+            this.trackSelected.elapsed = this.timerService.getElapsedTime(),
+                this.trackSelected.name = this.trackName.value;
 
-            this.timersService.updateTrack$(this.trackSelected).subscribe();
+            this.tracksService.updateTrack$(this.trackSelected).subscribe();
 
         }
 
+        this.trackSaved = true;
         this.computeTotalEspased();
         this.resetTimer();
     }
@@ -137,16 +110,15 @@ export class TimerComponent implements OnChanges, OnInit {
 
         this.trackSelected = track;
 
-        this.elapsed = track.elapsed;
+        this.timerService.setElapedTime(track.elapsed);
         this.trackName.setValue(track.name);
 
-        this.startTime = Date.now() - this.elapsed * 1000;
     }
 
     public deleteTrack(): void {
         if (this.trackSelected !== undefined) {
-            this.timersService.deleteTrack$(this.trackSelected).subscribe((x: Track) => {
-                this.trackedTimes$ = this.timersService.getTrackForDay$(this.dayId);
+            this.tracksService.deleteTrack$(this.trackSelected).subscribe((x: Track) => {
+                this.trackedTimes$ = this.tracksService.getTrackForDay$(this.dayId);
                 this.resetTimer();
             });
         }
@@ -167,28 +139,17 @@ export class TimerComponent implements OnChanges, OnInit {
     }
 
     public convertToTime(elapsedSeconds: number): string {
-        let hours = Math.floor(elapsedSeconds / 3600);
-        let minutes = Math.floor((elapsedSeconds - (hours * 3600)) / 60);
-        let seconds = elapsedSeconds % 60;
+        return this.timerService.convertToTime(elapsedSeconds);
+    }
 
-        let resHours = ""
-        if (hours < 10) resHours = "0" + hours
-        else resHours = hours.toString()
-
-        let resMinutes = ""
-        if (minutes < 10) { resMinutes = "0" + minutes }
-        else { resMinutes = minutes.toString() }
-
-        let resSeconds = ""
-        if (seconds < 10) { resSeconds = "0" + seconds }
-        else { resSeconds = seconds.toString() }
-
-        return resHours + ":" + resMinutes + ":" + resSeconds;
+    public getTimer(): string {
+        this.updateTray();
+        return this.timerService.getTimer();
     }
 
     private updateTray() {
         if ((window as any).electron) {
-            (window as any).electron.updateTimer(this.convertToTime(this.elapsed));
+            (window as any).electron.updateTimer(this.convertToTime(this.timerService.getElapsedTime()));
         }
     }
 }

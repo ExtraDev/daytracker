@@ -16,6 +16,7 @@ import { NewdayDialogComponent } from './common/dialog/newday-dialog/newday-dial
 import { ValidationDialogComponent } from './common/dialog/validation-dialog/validation-dialog.component';
 import { Day } from './common/models/day.model';
 import { DaysService, FullDay } from './common/services/day.service';
+import { TimerService } from './common/services/timer.service';
 import { DateComponent } from './widgets/date/date.component';
 import { NoteComponent } from './widgets/note/note.component';
 import { TimerComponent } from './widgets/timer/timer.component';
@@ -40,9 +41,14 @@ export class AppComponent {
 
     public getDays$ = this.daysService.getDays$().pipe();
 
+    private timerService = inject(TimerService);
+
     constructor() {
         this.daySubject$.pipe(
-            tap((day) => this.daySelected = day)
+            tap((day) => {
+                this.timerService.reset();
+                this.daySelected = day;
+            })
         ).subscribe();
 
         // this.getFullDays$ = this.daysService.getDaysAndTimer$().pipe(

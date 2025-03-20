@@ -3,7 +3,7 @@
         <div class="clock">
             <div class="timer">
                 <div>
-                    {{ convertToTime(elapsed) }}
+                    {{ getTimer() }}
                 </div>
                 <div class="controls">
                     <button (click)="startTimer()" mat-mini-fab color="primary" [disabled]="tickSubscription">
@@ -19,7 +19,7 @@
                     </button>
 
                     <button (click)="saveTrack()" mat-mini-fab color="primary"
-                        [disabled]="!elapsed || !trackName.value">
+                        [disabled]="trackSaved || !trackName.value">
                         <mat-icon>save</mat-icon>
                     </button>
 
