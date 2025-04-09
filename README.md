@@ -1,3 +1,3 @@
-# Dayagent
-1. start api by ```json-server --watch src/app/common/mock/database.json ```
+# DayAgent
+1. export NODE_TLS_REJECT_UNAUTHORIZED=0
 2. start the application by ```npm run electron```
