@@ -11,31 +11,44 @@ let tracks = [];
 app.commandLine.appendSwitch('disable-background-timer-throttling');
 app.commandLine.appendSwitch('disable-features', 'AutofillServerCommunication');
 
-// 🚀 Quand l'application est prête
 app.whenReady().then(() => {
-    console.log('Hello World :D');
-    // 🟢 Démarrer json-server
-    startJsonServer();
-
-    // 🖥️ Créer la fenêtre Electron
-    createMainWindow();
-
-    // 📌 Configurer le Tray
-    createTray();
-
-    // 🎧 Écoute les messages IPC venant d'Angular
-    setupIpcListeners();
+    // 🟢 Démarrer json-server et ensuite seulement lancer la fenêtre
+    startJsonServer().then(() => {
+        createMainWindow(); // Seulement quand json-server est prêt
+        createTray();
+        setupIpcListeners();
+    }).catch(err => {
+        console.error('Erreur lors du démarrage de json-server :', err);
+    });
 });
 
-// 🟢 Démarrer json-server
+// 🟢 Démarrer json-server (attend que ce soit prêt)
 function startJsonServer() {
-    jsonServerProcess = spawn('node', [
-        path.join(__dirname, '../node_modules/.bin/json-server'),
-        '--watch', path.join(__dirname, '../src/app/common/mock/database.json')
-    ]);
+    return new Promise((resolve, reject) => {
+        jsonServerProcess = spawn('node', [
+            path.join(__dirname, '../node_modules/.bin/json-server'),
+            '--watch',
+            path.join(__dirname, '../src/app/common/mock/database.json')
+        ]);
 
-    jsonServerProcess.stdout.on('data', (data) => console.log(`json-server: ${data}`));
-    jsonServerProcess.stderr.on('data', (data) => console.error(`json-server erreur: ${data}`));
+        jsonServerProcess.stdout.on('data', (data) => {
+            const message = data.toString();
+            console.log(`json-server: ${message}`);
+
+            // ✅ Quand json-server est prêt, on résout
+            if (message.includes('Watching')) {
+                resolve();
+            }
+        });
+
+        jsonServerProcess.stderr.on('data', (data) => {
+            console.error(`json-server erreur: ${data}`);
+        });
+
+        jsonServerProcess.on('error', (err) => {
+            reject(err);
+        });
+    });
 }
 
 // 🖥️ Créer la fenêtre principale

@@ -1,4 +1,3 @@
 # DayAgent
-1. export NODE_TLS_REJECT_UNAUTHORIZED=0
-2. npm install
-3. start the application by ```npm run electron```
+1. chmod +x run.sh
+2. bash run.sh
