@@ -48,12 +48,8 @@ export class AppComponent {
             tap((day) => {
                 this.timerService.reset();
                 this.daySelected = day;
-            })
+            }),
         ).subscribe();
-
-        // this.getFullDays$ = this.daysService.getDaysAndTimer$().pipe(
-        //     tap(days => console.log("full days", days))
-        // );
     }
 
     public addWidget(): void {
@@ -66,7 +62,7 @@ export class AppComponent {
         dialogRef.afterClosed().subscribe(result => {
             if (result && result.value) {
                 this.daysService.postDay$(
-                    { name: result.value, date: this.daysService.getActualDate() }
+                    { name: result.value, date: new Date().toISOString() }
                 ).pipe(
                     tap(() => this.getDays$ = this.daysService.getDays$().pipe())
                 ).subscribe();

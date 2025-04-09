@@ -1,9 +1,9 @@
-import { Component, Inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { Component, inject } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
     selector: 'app-newday-dialog',
@@ -19,13 +19,15 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/materia
     styleUrl: './newday-dialog.component.scss'
 })
 export class NewdayDialogComponent {
-    public dayName = new FormControl('', Validators.required);
+    public dayName = new FormControl(this.getActualDate(), Validators.required);
 
-    constructor(
-        private dialogRef: MatDialogRef<NewdayDialogComponent>
-    ) { }
+    private dialogRef = inject(MatDialogRef<NewdayDialogComponent>)
 
-    closeDialog(): void {
+    public closeDialog(): void {
         this.dialogRef.close();
+    }
+
+    public getActualDate(): string {
+        return new Date().toLocaleString().split(' ')[0];
     }
 }

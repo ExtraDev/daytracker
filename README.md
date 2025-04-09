@@ -1,3 +1,2 @@
 # DayAgent
-1. chmod +x run.sh
-2. bash run.sh
+1. bash run.sh

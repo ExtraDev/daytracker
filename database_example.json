@@ -1,10 +1,19 @@
 {
-    "days": [{
-        "id": "067c",
+    "days": [
+      {
         "name": "Ma première journée",
-        "date": "12-03-2025"
-    }],
+        "date": "2025-04-09T16:51:43.931Z",
+        "id": "MLefn6W"
+      }
+    ],
     "notes": [],
-    "tracks": [],
+    "tracks": [
+      {
+        "elapsed": 2,
+        "name": "Ma première tâche",
+        "dayId": "MLefn6W",
+        "id": "CInGDAG"
+      }
+    ],
     "todos": []
-}
+  }

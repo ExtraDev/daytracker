@@ -25,10 +25,10 @@ export class DaysService {
     public getDays$(): Observable<Day[] | undefined> {
         return this.httpClient.get<Day[] | undefined>(this.baseUrl).pipe(
             map(days => {
-                // console.log(days);
                 if (days) {
-                    return days.filter(day => day.name !== undefined && day.name !== "")
-                        .sort((dayA, dayB) => dayA.id! < dayB.id! ? -1 : 1);
+                    return days.sort((a, b) => {
+                        return new Date(b.date || '').getTime() - new Date(a.date || '').getTime();
+                    });
                 } else {
                     return undefined;
                 }
@@ -44,8 +44,6 @@ export class DaysService {
                         this.day['TIMER'] = tracks;
                     })
                 ).subscribe();
-
-                // console.log(this.day);
             })
         );
     }
