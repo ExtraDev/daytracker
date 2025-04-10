@@ -10,5 +10,6 @@ contextBridge.exposeInMainWorld('electron', {
     pauseTimer: () => ipcRenderer.send('pause-timer'),
     updateTracks: (tracks) => ipcRenderer.send('update-tracks', tracks),
     onStartTimer: (callback) => ipcRenderer.on('start-timer', callback),
-    onPauseTimer: (callback) => ipcRenderer.on('pause-timer', callback)
+    onPauseTimer: (callback) => ipcRenderer.on('pause-timer', callback),
+    onSaveTimer: (callback) => ipcRenderer.on('save-timer', callback)
 });

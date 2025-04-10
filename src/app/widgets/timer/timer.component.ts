@@ -45,12 +45,17 @@ export class TimerComponent implements OnChanges, OnInit {
 
     public ngOnInit(): void {
         if ((window as any).electron) {
+
             (window as any).electron.onStartTimer(() => {
                 this.ngZone.run(() => this.startTimer());
             });
 
             (window as any).electron.onPauseTimer(() => {
                 this.ngZone.run(() => this.pauseTimer());
+            });
+
+            (window as any).electron.onSaveTimer(() => {
+                this.ngZone.run(() => this.saveTrack());
             });
         }
     }

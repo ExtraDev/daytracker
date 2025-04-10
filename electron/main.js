@@ -12,6 +12,11 @@ app.commandLine.appendSwitch('disable-background-timer-throttling');
 app.commandLine.appendSwitch('disable-features', 'AutofillServerCommunication');
 
 app.whenReady().then(() => {
+    // 🟢 Définir l'icône du Dock sur macOS
+    if (process.platform === 'darwin') {
+        app.dock.setIcon(path.join(__dirname, 'assets', 'icon.png'));
+    }
+
     // 🟢 Démarrer json-server et ensuite seulement lancer la fenêtre
     startJsonServer().then(() => {
         createMainWindow(); // Seulement quand json-server est prêt
@@ -51,25 +56,43 @@ function startJsonServer() {
     });
 }
 
-// 🖥️ Créer la fenêtre principale
 function createMainWindow() {
     mainWindow = new BrowserWindow({
         width: 1200,
         height: 800,
+        icon: path.join(__dirname, 'assets', 'icon.png'),
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
-        },
+        }
     });
 
     mainWindow.loadFile(path.join(__dirname, '../dist/daytracker/browser/index.html'));
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
+
+    // 🛑 Confirmation de fermeture
+    mainWindow.on('close', (event) => {
+        const { response } = require('electron').dialog.showMessageBoxSync(mainWindow, {
+            type: 'question',
+            buttons: ['Annuler', 'Quitter'],
+            defaultId: 1,
+            cancelId: 0,
+            title: 'Confirmer',
+            message: 'Es-tu sûr de vouloir quitter DayTracker ?'
+        });
+
+        console.log(response)
+        if (response === 0) {
+            event.preventDefault(); // ⛔️ Empêche la fermeture
+        }
+    });
 
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
 }
+
 
 // 📌 Créer et configurer le Tray
 function createTray() {
@@ -86,6 +109,7 @@ function setupIpcListeners() {
     ipcMain.on('start-timer', () => mainWindow.webContents.send('start-timer'));
     ipcMain.on('pause-timer', () => mainWindow.webContents.send('pause-timer'));
     ipcMain.on('update-menu', () => mainWindow.webContents.send('update-timer'));
+    ipcMain.on('save-menu', () => mainWindow.webContents.send('save-timer'));
     ipcMain.on('update-tracks', (event, newTracks) => {
         tracks = newTracks;
         console.log(tracks);
@@ -103,6 +127,7 @@ function updateContextMenu() {
     const contextMenu = Menu.buildFromTemplate([
         { label: 'Démarrer', click: () => mainWindow.webContents.send('start-timer') },
         { label: 'Pause', click: () => mainWindow.webContents.send('pause-timer') },
+        { label: 'Sauvegarder', click: () => mainWindow.webContents.send('save-timer') },
         { type: 'separator' },
         ...trackItems, // Ajoute dynamiquement les tracks ici
         { type: 'separator' },
