@@ -69,7 +69,7 @@ function createMainWindow() {
     });
 
     mainWindow.loadFile(path.join(__dirname, '../dist/daytracker/browser/index.html'));
-    mainWindow.webContents.openDevTools();
+    //mainWindow.webContents.openDevTools();
 
     // 🛑 Confirmation de fermeture
     mainWindow.on('close', (event) => {
