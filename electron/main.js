@@ -1,5 +1,6 @@
 const { app, BrowserWindow, Tray, Menu, ipcMain } = require('electron');
 const { spawn } = require('child_process');
+const { powerMonitor } = require('electron');
 const path = require('path');
 
 let mainWindow;
@@ -7,40 +8,39 @@ let jsonServerProcess;
 let tray;
 let tracks = [];
 
-// 🔧 Désactiver certaines fonctionnalités pour améliorer les performances
 app.commandLine.appendSwitch('disable-background-timer-throttling');
 app.commandLine.appendSwitch('disable-features', 'AutofillServerCommunication');
 
 app.whenReady().then(() => {
-    // 🟢 Définir l'icône du Dock sur macOS
     if (process.platform === 'darwin') {
         app.dock.setIcon(path.join(__dirname, 'assets', 'icon.png'));
     }
 
-    // 🟢 Démarrer json-server et ensuite seulement lancer la fenêtre
     startJsonServer().then(() => {
-        createMainWindow(); // Seulement quand json-server est prêt
+        createMainWindow();
         createTray();
         setupIpcListeners();
     }).catch(err => {
         console.error('Erreur lors du démarrage de json-server :', err);
     });
+
+    setupIdleMonitor();
 });
 
-// 🟢 Démarrer json-server (attend que ce soit prêt)
 function startJsonServer() {
     return new Promise((resolve, reject) => {
         jsonServerProcess = spawn('node', [
             path.join(__dirname, '../node_modules/.bin/json-server'),
             '--watch',
-            path.join(__dirname, '../src/app/common/mock/database.json')
+            path.join(__dirname, '../src/app/common/mock/database.json'),
+            '--port',
+            '25564'
         ]);
 
         jsonServerProcess.stdout.on('data', (data) => {
             const message = data.toString();
             console.log(`json-server: ${message}`);
 
-            // ✅ Quand json-server est prêt, on résout
             if (message.includes('Watching')) {
                 resolve();
             }
@@ -69,11 +69,10 @@ function createMainWindow() {
     });
 
     mainWindow.loadFile(path.join(__dirname, '../dist/daytracker/browser/index.html'));
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 
-    // 🛑 Confirmation de fermeture
     mainWindow.on('close', (event) => {
-        const { response } = require('electron').dialog.showMessageBoxSync(mainWindow, {
+        const response = require('electron').dialog.showMessageBoxSync(mainWindow, {
             type: 'question',
             buttons: ['Annuler', 'Quitter'],
             defaultId: 1,
@@ -82,9 +81,8 @@ function createMainWindow() {
             message: 'Es-tu sûr de vouloir quitter DayTracker ?'
         });
 
-        console.log(response)
         if (response === 0) {
-            event.preventDefault(); // ⛔️ Empêche la fermeture
+            event.preventDefault();
         }
     });
 
@@ -93,17 +91,14 @@ function createMainWindow() {
     });
 }
 
-
-// 📌 Créer et configurer le Tray
 function createTray() {
     tray = new Tray(path.join(__dirname, 'assets', 'chronometer.png'));
     tray.setToolTip('DayTracker');
     tray.setTitle(`Task name`);
-    updateContextMenu(); // Initialise le menu contextuel
+    updateContextMenu();
     updateTrayText('');
 }
 
-// 🎧 Gestion des événements IPC
 function setupIpcListeners() {
     ipcMain.on('update-timer', (_, timerValue) => updateTrayText(timerValue));
     ipcMain.on('start-timer', () => mainWindow.webContents.send('start-timer'));
@@ -117,7 +112,6 @@ function setupIpcListeners() {
     });
 }
 
-// 🔄 Met à jour le menu contextuel du Tray
 function updateContextMenu() {
     const trackItems = tracks.map(track => ({
         label: track.name,
@@ -129,7 +123,7 @@ function updateContextMenu() {
         { label: 'Pause', click: () => mainWindow.webContents.send('pause-timer') },
         { label: 'Sauvegarder', click: () => mainWindow.webContents.send('save-timer') },
         { type: 'separator' },
-        ...trackItems, // Ajoute dynamiquement les tracks ici
+        ...trackItems,
         { type: 'separator' },
         { label: 'Quitter', click: () => app.quit() }
     ]);
@@ -137,12 +131,27 @@ function updateContextMenu() {
     tray.setContextMenu(contextMenu);
 }
 
-// 🕒 Met à jour le texte du Tray
 function updateTrayText(timerValue) {
     tray.setTitle(`${timerValue}`);
 }
 
-// ❌ Arrêter json-server quand Electron se ferme
+function setupIdleMonitor() {
+    const INACTIVITY_LIMIT = 15 * 60;
+
+    setInterval(() => {
+        const idleTime = powerMonitor.getSystemIdleTime();
+        if (idleTime >= INACTIVITY_LIMIT) {
+            console.log(`[Inactivité] ${idleTime}s — pause automatique`);
+            mainWindow.webContents.send('pause-timer');
+        }
+    }, 30 * 1000);
+
+    powerMonitor.on('user-did-resume', () => {
+        console.log('[Reprise activité] — redémarrage du timer');
+        mainWindow.webContents.send('start-timer');
+    });
+}
+
 app.on('quit', () => {
     if (jsonServerProcess) {
         jsonServerProcess.kill();

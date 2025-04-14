@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import {
     MatDialog,
@@ -21,6 +22,7 @@ import { DateComponent } from './widgets/date/date.component';
 import { NoteComponent } from './widgets/note/note.component';
 import { TimerComponent } from './widgets/timer/timer.component';
 import { TodoComponent } from './widgets/todo/todo.component';
+
 
 @Component({
     selector: 'app-root',
@@ -45,10 +47,24 @@ export class AppComponent {
 
     constructor() {
         this.daySubject$.pipe(
-            tap((day) => {
-                this.timerService.reset();
-                this.daySelected = day;
+            tap(day => {
+                if (this.timerService.isRunning()) {
+                    const dialogRef = this.dialog.open(ValidationDialogComponent, {
+                        data: 'Attention, vous n\'avez  pas sauvegardé votre timer. Voulez-vous vraiment quitter et perdre votre progression?',
+                    });
+
+                    dialogRef.afterClosed().subscribe(result => {
+                        if (result) {
+                            this.timerService.reset();
+                            this.daySelected = day;
+                        }
+                    });
+                } else {
+                    this.timerService.reset();
+                    this.daySelected = day;
+                }
             }),
+            takeUntilDestroyed()
         ).subscribe();
     }
 
@@ -71,7 +87,9 @@ export class AppComponent {
     }
 
     public deleteDay(): void {
-        const dialogRef = this.dialog.open(ValidationDialogComponent);
+        const dialogRef = this.dialog.open(ValidationDialogComponent, {
+            data: 'Voulez-vous vraiment supprimer cette page?',
+        });
 
         dialogRef.afterClosed().subscribe(result => {
             if (result && this.daySelected) {

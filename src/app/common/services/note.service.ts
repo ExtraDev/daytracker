@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, map, tap } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Note } from 'src/app/common/models/note.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class NotesService {
-    private baseUrl = 'http://localhost:3000/notes'
+    private baseUrl = 'http://localhost:25564/notes'
 
     constructor(private httpClient: HttpClient) { }
 

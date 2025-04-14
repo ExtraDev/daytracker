@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Todo } from '../models/todo.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class TodosService {
-    private baseUrl = 'http://localhost:3000/todos'
+    private baseUrl = 'http://localhost:25564/todos'
 
     constructor(private httpClient: HttpClient) { }
 

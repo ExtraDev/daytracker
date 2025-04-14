@@ -67,5 +67,9 @@ export class TimerService {
 
         return resHours + ":" + resMinutes + ":" + resSeconds;
     }
+
+    public isRunning(): boolean {
+        return this.isStated;
+    }
 }
 

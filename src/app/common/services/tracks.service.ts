@@ -7,7 +7,7 @@ import { Track } from '../models/track.model';
     providedIn: 'root'
 })
 export class TracksService {
-    private baseUrl = 'http://localhost:3000/tracks'
+    private baseUrl = 'http://localhost:25564/tracks'
     private httpClient = inject(HttpClient);
 
     protected selectedTracks$ = new Subject<Track[] | undefined>;

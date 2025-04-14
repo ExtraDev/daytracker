@@ -1,9 +1,9 @@
-import { Component, Inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { Component, inject } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
     selector: 'app-validation-dialog',
@@ -21,11 +21,14 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/materia
 export class ValidationDialogComponent {
     public validationBox = new FormControl<boolean>(false, Validators.required);
 
-    constructor(
-        private dialogRef: MatDialogRef<ValidationDialogComponent>
-    ) { }
+    readonly dialogRef = inject(MatDialogRef<ValidationDialogComponent>);
+    readonly message = inject<string>(MAT_DIALOG_DATA);
 
-    closeDialog(): void {
+    public constructor() {
+        console.log(this.message);
+    }
+
+    public closeDialog(): void {
         this.dialogRef.close();
     }
 }

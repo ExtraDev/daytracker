@@ -14,7 +14,7 @@ export interface FullDay {
     providedIn: 'root'
 })
 export class DaysService {
-    private baseUrl = 'http://localhost:3000/days'
+    private baseUrl = 'http://localhost:25564/days'
     private date = new Date();
     private httpClient = inject(HttpClient);
 
