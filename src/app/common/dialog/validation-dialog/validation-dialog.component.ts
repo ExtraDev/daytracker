@@ -24,10 +24,6 @@ export class ValidationDialogComponent {
     readonly dialogRef = inject(MatDialogRef<ValidationDialogComponent>);
     readonly message = inject<string>(MAT_DIALOG_DATA);
 
-    public constructor() {
-        console.log(this.message);
-    }
-
     public closeDialog(): void {
         this.dialogRef.close();
     }

@@ -3,10 +3,12 @@ import { Component, Input, NgZone, OnChanges, OnInit, SimpleChanges, inject, sig
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Observable, Subscription, filter, interval, map, tap } from 'rxjs';
+import { ValidationDialogComponent } from 'src/app/common/dialog/validation-dialog/validation-dialog.component';
 import { Track } from 'src/app/common/models/track.model';
 import { TimerService } from 'src/app/common/services/timer.service';
 import { TracksService } from 'src/app/common/services/tracks.service';
@@ -23,6 +25,7 @@ export class TimerComponent implements OnChanges, OnInit {
     private tracksService = inject(TracksService);
     private timerService = inject(TimerService);
     private ngZone = inject(NgZone);
+    private dialog = inject(MatDialog);
 
     protected trackSaved = true;
     tick$: Observable<number> = interval(1000);
@@ -125,13 +128,29 @@ export class TimerComponent implements OnChanges, OnInit {
     }
 
     public selectTrack(track: Track): void {
-        this.stopTickSubscription();
+        if (this.timerService.isRunning()) {
+            const dialogRef = this.dialog.open(ValidationDialogComponent, {
+                data: 'Voulez-vous vraiment changer de tâche sans sauvegarder?',
+            });
 
-        this.trackSelected = track;
+            dialogRef.afterClosed().subscribe(result => {
+                if (result) {
+                    this.stopTickSubscription();
 
-        this.timerService.setElapedTime(track.elapsed);
-        this.trackName.setValue(track.name);
+                    this.trackSelected = track;
 
+                    this.timerService.setElapedTime(track.elapsed);
+                    this.trackName.setValue(track.name);
+                }
+            });
+        } else {
+            this.stopTickSubscription();
+
+            this.trackSelected = track;
+
+            this.timerService.setElapedTime(track.elapsed);
+            this.trackName.setValue(track.name);
+        }
     }
 
     public deleteTrack(): void {
