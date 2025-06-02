@@ -1,21 +1,22 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { interval, Subscription } from 'rxjs';
 
 @Injectable({
-    providedIn: 'root' // 👈 Fournit le service au niveau de l'application
+    providedIn: 'root'
 })
 export class TimerService {
+    public isStated = signal<boolean>(false);
+
     private ticker$ = interval(1000);
     private tickerSubscription$: Subscription | undefined;
     private elapsedTime = 0;
-    private isStated = false;
 
     public start(): void {
         if (!this.tickerSubscription$) {
             this.tickerSubscription$ = this.ticker$.subscribe(() => {
                 this.elapsedTime++;
             });
-            this.isStated = true;
+            this.isStated.set(true);
         }
     }
 
@@ -23,7 +24,7 @@ export class TimerService {
         if (this.tickerSubscription$) {
             this.tickerSubscription$.unsubscribe();
             this.tickerSubscription$ = undefined;
-            this.isStated = false;
+            this.isStated.set(false);
         }
     }
 
@@ -66,10 +67,6 @@ export class TimerService {
         else { resSeconds = seconds.toString() }
 
         return resHours + ":" + resMinutes + ":" + resSeconds;
-    }
-
-    public isRunning(): boolean {
-        return this.isStated;
     }
 }
 

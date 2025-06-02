@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, Input, NgZone, OnChanges, OnInit, SimpleChanges, inject, signal } from '@angular/core';
+import { Component, DestroyRef, Input, NgZone, OnChanges, OnInit, SimpleChanges, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -7,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { Observable, Subscription, filter, interval, map, tap } from 'rxjs';
+import { Observable, Subscription, filter, map, tap } from 'rxjs';
 import { ValidationDialogComponent } from 'src/app/common/dialog/validation-dialog/validation-dialog.component';
 import { Track } from 'src/app/common/models/track.model';
 import { TimerService } from 'src/app/common/services/timer.service';
@@ -21,30 +22,30 @@ import { TracksService } from 'src/app/common/services/tracks.service';
 })
 export class TimerComponent implements OnChanges, OnInit {
     @Input() dayId?: number;
+    @Input() pageName?: string;
 
+    public trackName = new FormControl<string>('');
+    public trackSelected?: Track;
+
+    protected trackSaved = true;
+
+    private tickSubscription?: Subscription | undefined;
     private tracksService = inject(TracksService);
     private timerService = inject(TimerService);
     private ngZone = inject(NgZone);
     private dialog = inject(MatDialog);
+    private destroyRef = inject(DestroyRef);
 
-    protected trackSaved = true;
-    tick$: Observable<number> = interval(1000);
 
-    tickSubscription?: Subscription | undefined;
-    trackName = new FormControl<string>('');
-
-    trackSelected?: Track;
-    trackedTimes$?: Observable<Track[] | undefined> = this.tracksService.getTrackForDay$(this.dayId).pipe(
+    trackedTimes$?: Observable<ReadonlyArray<Track> | undefined> = this.tracksService.getTrackForDay$(this.dayId).pipe(
         tap(tracks => {
             if ((window as any).electron) {
                 (window as any).electron.updateTracks(tracks);
-                console.log(tracks);
             }
         })
     );
 
     public totalElapsed = signal(0);
-
 
     public ngOnInit(): void {
         if ((window as any).electron) {
@@ -104,8 +105,9 @@ export class TimerComponent implements OnChanges, OnInit {
                 dayId: this.dayId
             }
 
-            this.tracksService.postTrack$(newTrack).subscribe(track => {
-                console.log(track);
+            this.tracksService.postTrack$(newTrack).pipe(
+                takeUntilDestroyed(this.destroyRef)
+            ).subscribe(_ => {
                 this.trackedTimes$ = this.tracksService.getTrackForDay$(this.dayId);
             });
         }
@@ -118,7 +120,9 @@ export class TimerComponent implements OnChanges, OnInit {
             this.trackSelected.elapsed = this.timerService.getElapsedTime(),
                 this.trackSelected.name = this.trackName.value;
 
-            this.tracksService.updateTrack$(this.trackSelected).subscribe();
+            this.tracksService.updateTrack$(this.trackSelected).pipe(
+                takeUntilDestroyed(this.destroyRef)
+            ).subscribe();
 
         }
 
@@ -128,7 +132,7 @@ export class TimerComponent implements OnChanges, OnInit {
     }
 
     public selectTrack(track: Track): void {
-        if (this.timerService.isRunning()) {
+        if (this.timerService.isStated()) {
             const dialogRef = this.dialog.open(ValidationDialogComponent, {
                 data: 'Voulez-vous vraiment changer de tâche sans sauvegarder?',
             });
@@ -155,10 +159,23 @@ export class TimerComponent implements OnChanges, OnInit {
 
     public deleteTrack(): void {
         if (this.trackSelected !== undefined) {
-            this.tracksService.deleteTrack$(this.trackSelected).subscribe((x: Track) => {
-                this.trackedTimes$ = this.tracksService.getTrackForDay$(this.dayId);
-                this.resetTimer();
+            const dialogRef = this.dialog.open(ValidationDialogComponent, {
+                data: 'Voulez-vous supprimer la tâche ?',
             });
+
+            dialogRef.afterClosed()
+                .pipe(
+                    filter(Boolean),
+                    tap(() => {
+                        if (this.trackSelected !== undefined) {
+                            this.tracksService.deleteTrack$(this.trackSelected).subscribe(() => {
+                                this.trackedTimes$ = this.tracksService.getTrackForDay$(this.dayId);
+                                this.resetTimer();
+                            });
+                        }
+                    }),
+                    takeUntilDestroyed(this.destroyRef)
+                ).subscribe();
         }
     }
 
@@ -173,6 +190,7 @@ export class TimerComponent implements OnChanges, OnInit {
             map(tracks => {
                 this.totalElapsed.set(tracks.reduce((acc, track) => acc + track.elapsed, 0))
             }),
+            takeUntilDestroyed(this.destroyRef)
         ).subscribe();
     }
 

@@ -1,4 +1,13 @@
 mat-card {
+    mat-card-header {
+        font-size: 2rem;
+        margin: 1rem;
+
+        mat-card-title {
+            display: grid;
+        }
+    }
+
     mat-card-content {
         margin-top: 15px;
         display: flex;

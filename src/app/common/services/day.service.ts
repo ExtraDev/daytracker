@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, map, tap } from 'rxjs';
 import { Day } from '../models/day.model';
 import { Track } from '../models/track.model';
@@ -19,18 +20,19 @@ export class DaysService {
     private httpClient = inject(HttpClient);
 
     private timersSerivce = inject(TracksService);
+    private destroyRef = inject(DestroyRef);
 
     private day: any = {};
 
-    public getDays$(): Observable<Day[] | undefined> {
-        return this.httpClient.get<Day[] | undefined>(this.baseUrl).pipe(
+    public getDays$(): Observable<ReadonlyArray<Day>> {
+        return this.httpClient.get<Array<Day>>(this.baseUrl).pipe(
             map(days => {
                 if (days) {
                     return days.sort((a, b) => {
                         return new Date(b.date || '').getTime() - new Date(a.date || '').getTime();
                     });
                 } else {
-                    return undefined;
+                    return new Array<Day>();
                 }
             })
         );
@@ -42,7 +44,8 @@ export class DaysService {
                 this.timersSerivce.getTrackForDay$(dayId).pipe(
                     tap((tracks) => {
                         this.day['TIMER'] = tracks;
-                    })
+                    }),
+                    takeUntilDestroyed(this.destroyRef)
                 ).subscribe();
             })
         );

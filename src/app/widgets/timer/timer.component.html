@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card appearance="outlined">
     <mat-card-content>
         <div class="clock">
             <div class="timer">
@@ -6,7 +6,7 @@
                     {{ getTimer() }}
                 </div>
                 <div class="controls">
-                    <button (click)="startTimer()" mat-mini-fab color="primary" [disabled]="tickSubscription">
+                    <button (click)="startTimer()" mat-mini-fab color="primary">
                         <mat-icon>play_arrow</mat-icon>
                     </button>
 

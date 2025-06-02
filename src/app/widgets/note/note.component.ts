@@ -1,4 +1,5 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, DestroyRef, Input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -22,7 +23,7 @@ export class NoteComponent {
     public editMode = false;
     public noteControl = new FormControl<string>('');
 
-    constructor() { }
+    private destroyRef = inject(DestroyRef);
 
     public toggleEditMode(save: boolean = false): void {
         this.editMode = !this.editMode;
@@ -33,7 +34,9 @@ export class NoteComponent {
 
         if (save && this.note) {
             this.note.note = this.noteControl.value || '';
-            this.noteService.updateNote$(this.note).subscribe();
+            this.noteService.updateNote$(this.note).pipe(
+                takeUntilDestroyed(this.destroyRef)
+            ).subscribe();
         }
     }
 }
