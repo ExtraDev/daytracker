@@ -93,6 +93,7 @@ export class AppComponent {
             tap(newDay => {
                 if (newDay) {
                     this.days.update(days => [...days, newDay]);
+                    this.selectDay(newDay);
                 }
             }),
             takeUntilDestroyed(this.destroyRef)
